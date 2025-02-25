@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import Browser from "./pages/Browser";
 import Login from "./pages/Login";
 import PaperDetails from "./pages/PaperDetails";
+import Submit from "./pages/Submit";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="browser" element={<Browser />} />
           <Route path="paper-details" element={<PaperDetails />} />
           <Route path="login" element={<Login />} />
+          <Route path="submit" element={<Submit />} />
         </Route>
 
        
