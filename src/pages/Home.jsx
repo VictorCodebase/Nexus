@@ -1,16 +1,26 @@
-import React from 'react'
-import Hero from '../components/Hero'
-import Categories from "../components/Categories"
-import Research from "../components/Research"
+import { useEffect, useState } from "react";
+import Hero from "../components/Hero";
+import Categories from "../components/Categories";
+import Research from "../components/Research";
 
 const Home = () => {
-  return (
-    <div>
-      <Hero />
-      <Research />
-      <Categories/>
-    </div>
-  )
-}
+	const [serverRes, setServerRes] = useState({});
 
-export default Home
+	useEffect(() => {
+		fetch("/api?message=Hello server")
+			.then((response) => response.json())
+			.then((data) => {
+				setServerRes(data);
+				console.log(serverRes);
+			});
+	});
+	return (
+		<div>
+			<Hero />
+			<Research />
+			<Categories />
+		</div>
+	);
+};
+
+export default Home;
