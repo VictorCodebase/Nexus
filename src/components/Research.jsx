@@ -10,7 +10,6 @@ useEffect(() => {
 	fetch("/api/research_papers")
 		.then((response) => response.json())
 		.then((data) => {
-			console.log(data);
       setPapers(data)
 		})
 		.catch((error) => {
