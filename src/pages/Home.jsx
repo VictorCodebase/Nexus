@@ -13,7 +13,7 @@ const Home = () => {
 				setServerRes(data);
 				console.log(serverRes);
 			});
-	});
+	}, []);
 	return (
 		<div>
 			<Hero />
