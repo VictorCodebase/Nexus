@@ -28,7 +28,6 @@ const Browser = () => {
       <main className="w-3/4 bg-white px-6 py-4 shadow-md rounded-md h-full overflow-y-auto">
         {/* Description Section */}
         <PaperList filteredPapers={filteredPapers} />
-
   
       </main>
     </div>
