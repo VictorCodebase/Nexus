@@ -25,7 +25,7 @@ const PaperList = ({ filteredPapers }) => {
             </button>
           </div>
         </Link>
-        ))};
+        ))}
       </div>
     </>
   );
