@@ -1,6 +1,9 @@
 import React from "react";
+import {Link} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const PaperList = ({ filteredPapers }) => {
+  const navigate = useNavigate();
   return (
     <>
       <div className="mb-6">
@@ -10,7 +13,8 @@ const PaperList = ({ filteredPapers }) => {
       {/* List View */}
       <div>
         {filteredPapers.map((paper, index) => (
-          <div key={paper.id} className="py-4 border-b last:border-none">
+        <Link to={`/browser/${paper.id}`} key={paper.id}>
+          <div  className="py-4 border-b last:border-none">
             <h2 className="text-lg font-semibold">{paper.title}</h2>
             <p className="text-sm text-blue-500">
               By {paper.author} • Published: {paper.year}
@@ -20,7 +24,8 @@ const PaperList = ({ filteredPapers }) => {
               View Paper →
             </button>
           </div>
-        ))}
+        </Link>
+        ))};
       </div>
     </>
   );
