@@ -22,7 +22,7 @@ const Sidebar = ({categories, selectedCategory, setSelectedCategory}) => {
             {categories.map((category) => (
                 <li
                     key={category}
-                    className={`py-1 cursor-pointer ${
+                    className={`py-1 cursor-pointer border-b-1 border-blue-300 ${
                         selectedCategory === category ? 'text-blue-600' : 'text-blue-500 hover:text-blue-700'
                     }`}
                     onClick={() => setSelectedCategory(category)}
