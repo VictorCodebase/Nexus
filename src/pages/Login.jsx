@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { login, signup } from "../services/authServices"; // Import functions
+import { useNavigate } from "react-router-dom"; // For navigation after login/signup
 
 const AuthForm = () => {
   const [isSignup, setIsSignup] = useState(false);
@@ -7,20 +9,38 @@ const AuthForm = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate(); // Navigation hook
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isSignup && (!firstName || !lastName || !email || !password)) {
-      setError("All fields are required for signup");
-    } else if (!isSignup && (!email || !password)) {
-      setError("Email and password are required for login");
+    setError("");
+    setLoading(true);
+
+    let response;
+    if (isSignup) {
+      if (!firstName || !lastName || !email || !password) {
+        setError("All fields are required for signup");
+        setLoading(false);
+        return;
+      }
+      response = await signup(firstName, lastName, email, password);
     } else {
-      setError("");
-      console.log(
-        isSignup
-          ? `Signup - First Name: ${firstName}, Last Name: ${lastName}, Email: ${email}, Password: ${password}`
-          : `Login - Email: ${email}, Password: ${password}`
-      );
+      if (!email || !password) {
+        setError("Email and password are required for login");
+        setLoading(false);
+        return;
+      }
+      response = await login(email, password);
+    }
+
+    setLoading(false);
+
+    if (response.error) {
+      setError(response.error);
+    } else {
+      console.log("Success:", response);
+      navigate("/"); // Redirect to dashboard or home page
     }
   };
 
@@ -45,7 +65,6 @@ const AuthForm = () => {
                   className="w-full px-3 py-2 border rounded-md"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  required={isSignup}
                 />
               </div>
               <div className="mb-4 w-1/2">
@@ -58,7 +77,6 @@ const AuthForm = () => {
                   className="w-full px-3 py-2 border rounded-md"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  required={isSignup}
                 />
               </div>
             </div>
@@ -74,7 +92,6 @@ const AuthForm = () => {
               className="w-full px-3 py-2 border rounded-md"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
             />
           </div>
 
@@ -88,15 +105,15 @@ const AuthForm = () => {
               className="w-full px-3 py-2 border rounded-md"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
             />
           </div>
 
           <button
             type="submit"
             className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
+            disabled={loading}
           >
-            {isSignup ? "Signup" : "Login"}
+            {loading ? "Processing..." : isSignup ? "Signup" : "Login"}
           </button>
         </form>
 
