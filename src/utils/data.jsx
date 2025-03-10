@@ -6,191 +6,86 @@ const Categories = [
     "entertainment",
     "general",
     "health",
+    "Environment",
   ];
   
-  const researchPapers = [
-    // Science
+const researchPapers = [
     {
       id: 1,
-      title: "Quantum Computing Advances",
-      category: "science",
-      author: "Dr. Smith",
-      year: 2023,
-      description: "An in-depth look into the latest breakthroughs in quantum computing."
+      title: "The Role of Artificial Intelligence in Modern Healthcare",
+      author: "Dr. Emily Carter",
+      year: 2022,
+      category: "technology",
+      description:
+        "This paper explores the impact of AI-driven diagnostic tools and predictive analytics in improving patient outcomes.",
+      abstract:
+        "Artificial Intelligence (AI) has revolutionized healthcare by enabling faster and more accurate diagnoses, streamlining workflows, and personalizing patient care. This paper delves into the most impactful AI applications, challenges in implementation, and future possibilities.",
+      journal: "Journal of Medical Informatics",
+      doi: "10.1016/j.jmedinfo.2022.001",
+      keywords: ["Artificial Intelligence", "Healthcare", "Predictive Analytics"],
+      citations: 120,
     },
     {
       id: 2,
-      title: "The Future of Space Exploration",
-      category: "science",
-      author: "Dr. Neil Armstrong",
+      title: "Climate Change and Its Economic Impact",
+      author: "Prof. John Anderson",
       year: 2021,
-      description: "Analyzing the next steps in interstellar travel and space colonization."
+      category: "Environment",
+      description:
+        "An analysis of how climate change affects global economies, with case studies on developing nations.",
+      abstract:
+        "Climate change is no longer just an environmental concern but an economic crisis. This paper investigates the direct and indirect financial consequences of climate change, including rising insurance costs, loss of agricultural productivity, and supply chain disruptions.",
+      journal: "Global Environmental Economics",
+      doi: "10.1080/gre.2021.008",
+      keywords: ["Climate Change", "Economics", "Sustainability"],
+      citations: 98,
     },
     {
       id: 3,
-      title: "Genetic Engineering: Pros and Cons",
-      category: "science",
-      author: "Dr. Jane Foster",
-      year: 2022,
-      description: "A study on how genetic modifications impact modern medicine and agriculture."
+      title: "Blockchain Technology in Financial Transactions",
+      author: "Dr. Sophia Lee",
+      year: 2023,
+      category: "Finance",
+      description:
+        "A comprehensive study on how blockchain enhances security, transparency, and efficiency in financial systems.",
+      abstract:
+        "Blockchain is transforming the financial industry by reducing fraud, improving transaction speeds, and lowering costs. This study examines the technical mechanisms behind blockchain, its applications in banking, and regulatory challenges.",
+      journal: "International Journal of Finance & Technology",
+      doi: "10.1234/ijft.2023.004",
+      keywords: ["Blockchain", "Finance", "Cryptocurrency"],
+      citations: 76,
     },
-  
-    // Sports
     {
       id: 4,
-      title: "Sports Science and Performance Enhancement",
-      category: "sports",
-      author: "Dr. Michael Jordan",
+      title: "Mental Health and Social Media Usage Among Teenagers",
+      author: "Dr. Linda Martinez",
       year: 2020,
-      description: "Exploring the role of technology in improving athletic performance."
+      category: "Psychology",
+      description:
+        "A study investigating the relationship between excessive social media usage and mental health issues in adolescents.",
+      abstract:
+        "Social media platforms have transformed communication but have also raised concerns about mental health. This research explores the psychological effects of prolonged social media use among teenagers, examining factors such as anxiety, depression, and self-esteem.",
+      journal: "Psychological Review",
+      doi: "10.5678/pr.2020.009",
+      keywords: ["Mental Health", "Social Media", "Adolescents"],
+      citations: 135,
     },
     {
       id: 5,
-      title: "The Psychology of Winning",
-      category: "sports",
-      author: "Dr. Serena Williams",
-      year: 2023,
-      description: "How mental strength influences sports performance and success."
-    },
-    {
-      id: 6,
-      title: "The Evolution of Football Strategies",
-      category: "sports",
-      author: "Dr. Ronaldo",
-      year: 2021,
-      description: "A historical analysis of how tactics in football have changed over the decades."
-    },
-  
-    // Technology
-    {
-      id: 7,
-      title: "Renewable Energy Solutions",
-      category: "technology",
-      author: "Dr. Brown",
-      year: 2021,
-      description: "A study on sustainable energy sources and their implementation worldwide."
-    },
-    {
-      id: 8,
-      title: "Cybersecurity in the Digital Age",
-      category: "technology",
-      author: "Dr. Kevin Mitnick",
+      title: "The Future of Renewable Energy: Challenges and Opportunities",
+      author: "Prof. Daniel Brown",
       year: 2022,
-      description: "Examining modern threats and solutions in cybersecurity."
+      category: "Energy",
+      description:
+        "An exploration of the current trends in renewable energy sources and the obstacles faced in large-scale adoption.",
+      abstract:
+        "Renewable energy is critical for reducing carbon emissions and achieving sustainability goals. This paper assesses the advancements in solar, wind, and hydroelectric energy, the economic viability of green energy, and policy implications.",
+      journal: "Energy Policy & Sustainability",
+      doi: "10.4444/eps.2022.011",
+      keywords: ["Renewable Energy", "Sustainability", "Policy"],
+      citations: 89,
     },
-    {
-      id: 9,
-      title: "Artificial Intelligence and Ethics",
-      category: "technology",
-      author: "Dr. Alan Turing",
-      year: 2023,
-      description: "A discussion on the ethical implications of AI advancements."
-    },
-  
-    // Business
-    {
-      id: 10,
-      title: "The Rise of E-Commerce",
-      category: "business",
-      author: "Dr. Jeff Bezos",
-      year: 2021,
-      description: "Understanding how online businesses are transforming global commerce."
-    },
-    {
-      id: 11,
-      title: "Cryptocurrency and the Future of Finance",
-      category: "business",
-      author: "Dr. Satoshi Nakamoto",
-      year: 2023,
-      description: "A deep dive into the world of blockchain and digital currencies."
-    },
-    {
-      id: 12,
-      title: "Leadership in the 21st Century",
-      category: "business",
-      author: "Dr. Simon Sinek",
-      year: 2020,
-      description: "How leadership strategies have evolved in a rapidly changing world."
-    },
-  
-    // Entertainment
-    {
-      id: 13,
-      title: "The Impact of Streaming Services",
-      category: "entertainment",
-      author: "Dr. Netflix",
-      year: 2022,
-      description: "How streaming platforms are changing the way we consume media."
-    },
-    {
-      id: 14,
-      title: "The Evolution of Video Games",
-      category: "entertainment",
-      author: "Dr. Shigeru Miyamoto",
-      year: 2021,
-      description: "A historical analysis of video game development from the 80s to now."
-    },
-    {
-      id: 15,
-      title: "The Role of Music in Mental Health",
-      category: "entertainment",
-      author: "Dr. Dre",
-      year: 2023,
-      description: "A look into how music therapy is used for emotional well-being."
-    },
-  
-    // General
-    {
-      id: 16,
-      title: "Climate Change and Its Effects",
-      category: "general",
-      author: "Dr. Greta Thunberg",
-      year: 2021,
-      description: "An overview of how global warming is affecting ecosystems worldwide."
-    },
-    {
-      id: 17,
-      title: "Social Media and Mental Health",
-      category: "general",
-      author: "Dr. Jonathan Haidt",
-      year: 2022,
-      description: "Analyzing the effects of social media on youth mental health."
-    },
-    {
-      id: 18,
-      title: "The Future of Work in a Digital Age",
-      category: "general",
-      author: "Dr. Elon Musk",
-      year: 2023,
-      description: "How automation and AI are reshaping job markets worldwide."
-    },
-  
-    // Health
-    {
-      id: 19,
-      title: "AI in Healthcare",
-      category: "health",
-      author: "Dr. Johnson",
-      year: 2022,
-      description: "Exploring the impact of artificial intelligence in modern healthcare systems."
-    },
-    {
-      id: 20,
-      title: "Nutrition and Longevity",
-      category: "health",
-      author: "Dr. Rhonda Patrick",
-      year: 2021,
-      description: "How diet and nutrition impact life expectancy and overall health."
-    },
-    {
-      id: 21,
-      title: "The Psychology of Stress",
-      category: "health",
-      author: "Dr. Robert Sapolsky",
-      year: 2020,
-      description: "Understanding how stress affects the body and mind."
-    }
   ];
-
+  
   
   export { Categories, researchPapers };
