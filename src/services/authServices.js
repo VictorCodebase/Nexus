@@ -22,7 +22,7 @@ export const signup = async (firstName, lastName, email, password) => {
         password,
         });
         localStorage.setItem("token", response.data.token);
-        return response.data;
+    
     } catch (error) {
         return { error: error.response.data.message || error.message };
     }

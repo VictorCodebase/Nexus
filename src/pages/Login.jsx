@@ -6,8 +6,8 @@ const AuthForm = () => {
   const [isSignup, setIsSignup] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [fname, setfname] = useState("");
+  const [lname, setlname] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate(); // Navigation hook
@@ -19,12 +19,12 @@ const AuthForm = () => {
 
     let response;
     if (isSignup) {
-      if (!firstName || !lastName || !email || !password) {
+      if (!fname || !lname || !email || !password) {
         setError("All fields are required for signup");
         setLoading(false);
         return;
       }
-      response = await signup(firstName, lastName, email, password);
+      response = await signup(fname, lname, email, password);
     } else {
       if (!email || !password) {
         setError("Email and password are required for login");
@@ -63,8 +63,8 @@ const AuthForm = () => {
                   type="text"
                   id="firstName"
                   className="w-full px-3 py-2 border rounded-md"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
+                  value={fname}
+                  onChange={(e) => setfname(e.target.value)}
                 />
               </div>
               <div className="mb-4 w-1/2">
@@ -75,8 +75,8 @@ const AuthForm = () => {
                   type="text"
                   id="lastName"
                   className="w-full px-3 py-2 border rounded-md"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
+                  value={lname}
+                  onChange={(e) => setlname(e.target.value)}
                 />
               </div>
             </div>
