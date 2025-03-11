@@ -6,6 +6,10 @@ export const login = async (email, password) => {
         email,
         password,
         });
+        if (response.data.token){
+            localStorage.setItem("token", response.data.token);
+            localStorage.setItem("user", JSON.stringify(response.data.user));
+        }
         return response.data;
     } catch (error) {
         return { error: error.response.data.message || error.message };
@@ -13,15 +17,22 @@ export const login = async (email, password) => {
 }   
 
 //signup function
-export const signup = async (firstName, lastName, email, password) => {
+export const signup = async (fname, lname, email, password) => {
     try {
         const response = await axios.post("http://localhost:5000/api/auth/register", {
-        firstName,
-        lastName,
+        fname,
+        lname,
         email,
         password,
         });
-        localStorage.setItem("token", response.data.token);
+        if (response.data.token){
+
+            localStorage.setItem("token", response.data.token);
+            localStorage.setItem("user", JSON.stringify(response.data.user));
+        }
+
+        return response.data;
+
     
     } catch (error) {
         return { error: error.response.data.message || error.message };

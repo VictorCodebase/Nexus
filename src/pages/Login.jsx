@@ -1,16 +1,17 @@
 import React, { useState } from "react";
-import { login, signup } from "../services/authServices"; // Import functions
-import { useNavigate } from "react-router-dom"; // For navigation after login/signup
+import { login, signup } from "../services/authServices";
+import { useNavigate } from "react-router-dom";
 
 const AuthForm = () => {
   const [isSignup, setIsSignup] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [fname, setfname] = useState("");
-  const [lname, setlname] = useState("");
+  const [fname, setFname] = useState("");
+  const [lname, setLname] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate(); // Navigation hook
+  const [welcome, setWelcome] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,7 +41,19 @@ const AuthForm = () => {
       setError(response.error);
     } else {
       console.log("Success:", response);
-      navigate("/"); // Redirect to dashboard or home page
+
+      // Store user data in localStorage
+      localStorage.setItem("user", JSON.stringify(response.user));
+      localStorage.setItem("token", response.token); // Ensure token is stored
+
+      // Display Welcome Message
+      setWelcome(`Welcome ${response.user.fname} ${response.user.lname}`);
+
+      // ✅ Added Delay Before Navigation
+      setTimeout(() => {
+        setWelcome(""); // Clear the welcome message
+        navigate("/"); // Navigate after delay
+      }, 2000); // 3-second delay
     }
   };
 
@@ -51,7 +64,7 @@ const AuthForm = () => {
           {isSignup ? "Signup" : "Login"}
         </h2>
         {error && <p className="text-red-500 mb-4">{error}</p>}
-        
+
         <form onSubmit={handleSubmit}>
           {isSignup && (
             <div className="flex flex-row gap-2">
@@ -64,7 +77,7 @@ const AuthForm = () => {
                   id="firstName"
                   className="w-full px-3 py-2 border rounded-md"
                   value={fname}
-                  onChange={(e) => setfname(e.target.value)}
+                  onChange={(e) => setFname(e.target.value)}
                 />
               </div>
               <div className="mb-4 w-1/2">
@@ -76,7 +89,7 @@ const AuthForm = () => {
                   id="lastName"
                   className="w-full px-3 py-2 border rounded-md"
                   value={lname}
-                  onChange={(e) => setlname(e.target.value)}
+                  onChange={(e) => setLname(e.target.value)}
                 />
               </div>
             </div>
@@ -127,6 +140,13 @@ const AuthForm = () => {
           </button>
         </p>
       </div>
+
+      {/* Welcome Popup */}
+      {welcome && (
+        <div className="fixed top-5 right-5 bg-green-500 text-white p-4 rounded-md shadow-lg transition-opacity duration-500">
+          {welcome}
+        </div>
+      )}
     </div>
   );
 };
