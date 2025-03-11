@@ -7,7 +7,7 @@ const Navbar = () => {
   const dropdownRef = useRef(null);
   
   
-  const isAuthenticated = true;
+  const isAuthenticated = false;
 
   
   const toggleDropdown = () => setShowDropdown(!showDropdown);
