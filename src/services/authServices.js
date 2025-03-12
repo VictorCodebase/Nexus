@@ -39,6 +39,17 @@ export const signup = async (fname, lname, email, password) => {
     }
 }
 
+export const logout = async()=>{
+    try{
+        const respose = await axios.get("http://localhost:5000/api/auth/logout", {headers: {Authorization: `Bearer ${getToken()}`}});
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        return respose.data;    
+    }catch(error){
+        return {error: error.response.data.message || error.message};
+    }
+}
+
 //Getting the stored token
 export const getToken = () => {
     return localStorage.getItem("token") || null;
