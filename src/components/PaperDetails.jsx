@@ -42,6 +42,7 @@ const PaperDetails = ({ paper }) => {
         <section>
           <h2 className="text-2xl font-semibold text-gray-800">Abstract</h2>
           <p className="mt-2 text-gray-700 leading-relaxed">{paper.abstract}</p>
+          <p className="mt-2 text-gray-700 leading-relaxed">{paper.introduction}</p>
         </section>
 
         {/* Journal & DOI */}

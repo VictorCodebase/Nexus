@@ -29,7 +29,7 @@ const ResearchPapers = () => {
       </div>
 
       <div className="mt-8 grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-        {papers.map((paper) => (
+        {papers.slice(0,2).map((paper) => (
           <div key={paper.id} className="bg-white p-6 rounded-lg shadow-md">
             <div className="flex items-center space-x-3">
               <FileText size={24} className="text-blue-600" />
@@ -39,6 +39,7 @@ const ResearchPapers = () => {
               By {paper.author} • {paper.category}
             </p>
             <p className="mt-3 text-gray-700 text-sm">{paper.abstract}</p>
+            {/* <p className="mt-3 text-gray-600 text-sm">{paper.introduction}</p> */}
             <a
               href={`/browser/${paper.id}`}
               className="mt-4 inline-flex items-center text-blue-600 font-medium hover:underline"

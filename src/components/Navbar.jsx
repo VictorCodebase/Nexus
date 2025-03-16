@@ -8,7 +8,17 @@ const Navbar = () => {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
-  const isAuthenticated = true;
+  const [isAuthenticated, setIsAuthenticated] =  useState(false);
+
+  useEffect(()=>{
+    //checking if the user is logged in by checkuing the lcoal storage
+    const user = localStorage.getItem("user");
+    console.log("this is the user data", user)
+    if (user ){
+      setIsAuthenticated(true)
+    }
+
+  },[])
 
   const toggleDropdown = () => setShowDropdown(!showDropdown);
 
@@ -55,7 +65,9 @@ const Navbar = () => {
                 <button
                   className="flex w-full items-center gap-2 px-4 py-2 text-red-500 hover:bg-gray-100"
                   onClick={() => {
-                    logout(), navigate("/login");
+                    logout(),
+                    setIsAuthenticated(false),
+                    navigate("/login");
                   }}
                 >
                   <LogOut size={16} />
