@@ -1,27 +1,22 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { logout } from "../services/authServices";
 import { CircleUser, LogOut, User } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 const Navbar = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+  const { user, handleLogout } = useAuth();
 
-  const [isAuthenticated, setIsAuthenticated] =  useState(false);
-
-  useEffect(()=>{
-    //checking if the user is logged in by checkuing the lcoal storage
-    const user = localStorage.getItem("user");
-    console.log("this is the user data", user)
-    if (user ){
-      setIsAuthenticated(true)
-    }
-
-  },[])
+  // Debugging: Log user changes
+  useEffect(() => {
+    console.log("Navbar User:", user);
+  }, [user]);
 
   const toggleDropdown = () => setShowDropdown(!showDropdown);
 
+  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -37,14 +32,18 @@ const Navbar = () => {
       <h1 className="text-3xl font-bold">NeXus</h1>
 
       <div className="flex space-x-5">
-        <Link to="/" className="hover:text-gray-300">
-          Home
-        </Link>
-        <Link to="/browser" className="hover:text-gray-300">
-          Articles
-        </Link>
+        <Link to="/" className="hover:text-gray-300">Home</Link>
+        <Link to="/browser" className="hover:text-gray-300">Articles</Link>
 
-        {isAuthenticated ? (
+        {user && (
+          <Link to="/submit" className="hover:text-gray-300">
+            <span className="px-3 py-2 bg-green-400 rounded-3xl text-md font-semibold">
+              Submit
+            </span>
+          </Link>
+        )}
+
+        {user ? (
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={toggleDropdown}
@@ -64,9 +63,8 @@ const Navbar = () => {
                 </Link>
                 <button
                   className="flex w-full items-center gap-2 px-4 py-2 text-red-500 hover:bg-gray-100"
-                  onClick={() => {
-                    logout(),
-                    setIsAuthenticated(false),
+                  onClick={async () => {
+                    await handleLogout();
                     navigate("/login");
                   }}
                 >
@@ -77,9 +75,7 @@ const Navbar = () => {
             )}
           </div>
         ) : (
-          <Link to="/login" className="hover:text-gray-300">
-            Login
-          </Link>
+          <Link to="/login" className="hover:text-gray-300">Login</Link>
         )}
       </div>
     </div>
