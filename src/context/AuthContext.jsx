@@ -3,9 +3,9 @@ import {
   login,
   signup,
   logout,
-  getUser,
   getToken,
 } from "../services/authServices";
+import { User } from "lucide-react";
 
 const AuthContext = createContext();
 
@@ -13,10 +13,10 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch user when component mounts
+  // Fetch user when the app loads
   useEffect(() => {
     const fetchUser = async () => {
-        console.log("fetchUser");
+      console.log("Fetching user...");
       const token = getToken();
       const storedUser = localStorage.getItem("user");
 
@@ -34,26 +34,35 @@ export const AuthProvider = ({ children }) => {
   const handleLogin = async (email, password) => {
     const response = await login(email, password);
     if (response.token) {
-      const userData = { email }; // Store user data directly
-      setUser(userData);
-      localStorage.setItem("user", JSON.stringify(userData)); // Persist user
+      const userData = { email };
+  
+      localStorage.setItem("user", JSON.stringify(userData)); 
+      
+      setUser(null);  // Force a state reset first
+
+
+      setTimeout(() => setUser(userData), 0); // Set user after a slight delay
+  
+      
     }
     return response;
   };
+  
 
   const handleSignup = async (fname, lname, email, password) => {
     const response = await signup(fname, lname, email, password);
     if (response.token) {
       const userData = { email };
-      setUser(userData);
       localStorage.setItem("user", JSON.stringify(userData));
+      setUser(userData);
     }
     return response;
   };
 
   const handleLogout = async () => {
     await logout();
-    setUser(null);
+    localStorage.removeItem("user"); // Clear stored user
+    setUser(null); // Trigger re-render
   };
 
   return (

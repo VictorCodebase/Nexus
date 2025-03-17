@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 
 const Navbar = () => {
   const [showDropdown, setShowDropdown] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const { user, handleLogout } = useAuth();
@@ -12,8 +13,8 @@ const Navbar = () => {
   // Debugging: Log user changes
   useEffect(() => {
     console.log("Navbar User:", user);
-  }, [user]);
-
+    setIsAuthenticated(user ? true : false);
+  }, [user])
   const toggleDropdown = () => setShowDropdown(!showDropdown);
 
   // Close dropdown when clicking outside
@@ -35,16 +36,16 @@ const Navbar = () => {
         <Link to="/" className="hover:text-gray-300">Home</Link>
         <Link to="/browser" className="hover:text-gray-300">Articles</Link>
 
-        {user && (
-          <Link to="/submit" className="hover:text-gray-300">
-            <span className="px-3 py-2 bg-green-400 rounded-3xl text-md font-semibold">
-              Submit
-            </span>
-          </Link>
-        )}
+        {isAuthenticated ? (
+          <div className="relative flex items-center space-x-4" ref={dropdownRef}>
+            {/* Submit Button */}
+            <Link to="/submit" className="hover:text-gray-300">
+              <span className="px-3 py-2 bg-green-400 rounded-3xl text-md font-semibold">
+                Submit
+              </span>
+            </Link>
 
-        {user ? (
-          <div className="relative" ref={dropdownRef}>
+            {/* Profile Icon & Dropdown */}
             <button
               onClick={toggleDropdown}
               className="flex items-center space-x-2 hover:text-gray-300"
@@ -53,7 +54,7 @@ const Navbar = () => {
             </button>
 
             {showDropdown && (
-              <div className="absolute right-0 mt-2 w-40 bg-white text-black shadow-md rounded-lg border">
+              <div className="absolute right-0 top-5 mt-2 w-40 bg-white text-black shadow-md rounded-lg border">
                 <Link
                   to="/profile"
                   className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
