@@ -49,8 +49,8 @@ export const AuthProvider = ({ children }) => {
   };
   
 
-  const handleSignup = async (fname, lname, email, password) => {
-    const response = await signup(fname, lname, email, password);
+  const handleSignup = async (institution, fname, lname,username, email, password) => {
+    const response = await signup(institution,fname, lname,username, email, password);
     if (response.token) {
       const userData = { email };
       localStorage.setItem("user", JSON.stringify(userData));

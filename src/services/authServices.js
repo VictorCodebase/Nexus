@@ -20,16 +20,19 @@ export const login = async (email, password) => {
 };
 
 // 🔹 Signup function
-export const signup = async (fname, lname, email, password) => {
+export const signup = async (institution,fname, lname,username, email, password) => {
     try {
-        const response = await axios.post(`${API_URL}/register`, { fname, lname, email, password });
+        const response = await axios.post(`${API_URL}/register`, {institution, fname, lname,username, email,password });
 
         if (response.data.token) {
             localStorage.setItem("token", response.data.token);
         }
 
+        console.log("Signup Response:", response.data);
+
         return response.data;
     } catch (error) {
+        console.log(error)
         return { error: error.response?.data?.message || "Signup failed" };
     }
 };

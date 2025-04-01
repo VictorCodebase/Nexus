@@ -8,6 +8,8 @@ const AuthForm = () => {
   const [password, setPassword] = useState("");
   const [fname, setFname] = useState("");
   const [lname, setLname] = useState("");
+  const [username, setUsername] = useState("");
+  const [institution, setInstitution] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [welcome, setWelcome] = useState("");
@@ -20,12 +22,16 @@ const AuthForm = () => {
 
     let response;
     if (isSignup) {
-      if (!fname || !lname || !email || !password) {
+      if (!fname || !lname  ||!institution||!username|| !email || !password) {
         setError("All fields are required for signup");
         setLoading(false);
+
         return;
       }
-      response = await signup(fname, lname, email, password);
+
+        console.log("form data", fname, lname, institution, username, email, password);
+
+      response = await signup(institution,fname, lname,username, email, password);
     } else {
       if (!email || !password) {
         setError("Email and password are required for login");
@@ -49,7 +55,7 @@ const AuthForm = () => {
       // Display Welcome Message
       setWelcome(`Welcome ${response.user.fname} ${response.user.lname}`);
 
-      // ✅ Added Delay Before Navigation
+      // Added Delay Before Navigation
       setTimeout(() => {
         setWelcome(""); // Clear the welcome message
         navigate("/"); // Navigate after delay
@@ -67,32 +73,60 @@ const AuthForm = () => {
 
         <form onSubmit={handleSubmit}>
           {isSignup && (
-            <div className="flex flex-row gap-2">
-              <div className="mb-4 w-1/2">
-                <label className="block text-gray-700 mb-2" htmlFor="firstName">
-                  First Name
-                </label>
+            <section>
+              <div className="flex flex-row gap-2">
+                <div className="mb-4 w-1/2">
+                  <label
+                    className="block text-gray-700 mb-2"
+                    htmlFor="firstName"
+                  >
+                    First Name
+                  </label>
+                  <input
+                    type="text"
+                    id="firstName"
+                    className="w-full px-3 py-2 border rounded-md"
+                    value={fname}
+                    onChange={(e) => setFname(e.target.value)}
+                  />
+                </div>
+                <div className="mb-4 w-1/2">
+                  <label
+                    className="block text-gray-700 mb-2"
+                    htmlFor="lastName"
+                  >
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    id="lastName"
+                    className="w-full px-3 py-2 border rounded-md"
+                    value={lname}
+                    onChange={(e) => setLname(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="mb-4">
+                <label htmlFor="username" className="text-gray-700"> User name</label>
                 <input
                   type="text"
-                  id="firstName"
+                  id="username"
                   className="w-full px-3 py-2 border rounded-md"
-                  value={fname}
-                  onChange={(e) => setFname(e.target.value)}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                 />
               </div>
-              <div className="mb-4 w-1/2">
-                <label className="block text-gray-700 mb-2" htmlFor="lastName">
-                  Last Name
-                </label>
+              <div className="mb-4">
+                <label htmlFor="institution" className="text-gray-700"> Institution</label>
                 <input
                   type="text"
-                  id="lastName"
+                  id="institution"
                   className="w-full px-3 py-2 border rounded-md"
-                  value={lname}
-                  onChange={(e) => setLname(e.target.value)}
+                  value={institution}
+                  onChange={(e) => setInstitution(e.target.value)}
                 />
               </div>
-            </div>
+            </section>
           )}
 
           <div className="mb-4">
