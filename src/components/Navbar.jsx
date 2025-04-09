@@ -5,16 +5,11 @@ import { useAuth } from "../context/AuthContext";
 
 const Navbar = () => {
   const [showDropdown, setShowDropdown] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
-  const { user, handleLogout } = useAuth();
+  const { user, handleLogout } = useAuth(); // Access user and logout function from AuthContext
 
-  // Debugging: Log user changes
-  useEffect(() => {
-    console.log("Navbar User:", user);
-    setIsAuthenticated(user ? true : false);
-  }, [user])
+  // Toggle dropdown visibility
   const toggleDropdown = () => setShowDropdown(!showDropdown);
 
   // Close dropdown when clicking outside
@@ -30,13 +25,16 @@ const Navbar = () => {
 
   return (
     <div className="bg-gray-800 text-white p-4 h-16 flex items-center justify-between">
+      {/* Logo */}
       <h1 className="text-3xl font-bold">NeXus</h1>
 
+      {/* Navigation Links */}
       <div className="flex space-x-5">
         <Link to="/" className="hover:text-gray-300">Home</Link>
         <Link to="/browser" className="hover:text-gray-300">Articles</Link>
 
-        {isAuthenticated ? (
+        {/* Authenticated User Section */}
+        {user ? (
           <div className="relative flex items-center space-x-4" ref={dropdownRef}>
             {/* Submit Button */}
             <Link to="/submit" className="hover:text-gray-300">
@@ -76,6 +74,7 @@ const Navbar = () => {
             )}
           </div>
         ) : (
+          // Login Link for Unauthenticated Users
           <Link to="/login" className="hover:text-gray-300">Login</Link>
         )}
       </div>

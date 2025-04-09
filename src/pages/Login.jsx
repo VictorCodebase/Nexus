@@ -52,14 +52,18 @@ const AuthForm = () => {
       localStorage.setItem("user", JSON.stringify(response.user));
       localStorage.setItem("token", response.token); // Ensure token is stored
 
+     // Reload the page to reflect changes
+
       // Display Welcome Message
       setWelcome(`Welcome ${response.user.fname} ${response.user.lname}`);
 
       // Added Delay Before Navigation
       setTimeout(() => {
         setWelcome(""); // Clear the welcome message
+      
+
         navigate("/"); // Navigate after delay
-      }, 2000); // 3-second delay
+      }, 1000); // 3-second delay
     }
   };
 
