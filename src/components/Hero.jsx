@@ -73,13 +73,13 @@ const Hero = () => {
         </div>
 
         {/* Call to Action */}
-        <div className="mt-6">
+        {/* <div className="mt-6">
           <Link to="/submit">
             <button className="bg-green-600 hover:bg-green-500 px-6 py-3 rounded-lg text-lg font-semibold">
               Submit Your Paper
             </button>
           </Link>
-        </div>
+        </div> */}
       </div>
     </section>
   );

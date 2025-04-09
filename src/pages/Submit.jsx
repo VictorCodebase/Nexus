@@ -37,7 +37,7 @@ const Submit = () => {
     formData.append("meta", meta);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/localUploadPaper", formData, {
+      const response = await axios.post("http://localhost:5000/api/papers/local", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
