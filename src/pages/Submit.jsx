@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import axios from "axios";
 import { UploadCloud } from "lucide-react";
 
@@ -13,6 +13,12 @@ const Submit = () => {
   const [meta, setMeta] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+
+  const token = localStorage.getItem("token")
+
+  
+
 
   const handleFileChange = (e) => setFile(e.target.files[0]);
 
@@ -37,9 +43,10 @@ const Submit = () => {
     formData.append("meta", meta);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/papers/local", formData, {
+      const response = await axios.post("http://localhost:5000/api/papers/", formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -55,13 +62,14 @@ const Submit = () => {
         setMeta("");
       }
     } catch (err) {
+      console.log("this is the error", err);
       setError(err.response?.data?.error || "Failed to upload the file. Please try again.");
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center px-4 py-10">
-      <div className="w-full max-w-3xl bg-white rounded-2xl shadow-lg p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center px-4 py-4">
+      <div className="w-full max-w-5xl bg-white rounded-2xl shadow-lg p-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800">Submit Research Document</h1>
           <p className="text-gray-500 mt-2">Fill in the form below to upload your research paper</p>
