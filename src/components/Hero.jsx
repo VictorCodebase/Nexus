@@ -1,13 +1,15 @@
-import { Search, FileText, ChevronDown } from "lucide-react";
+import { Search, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-const categories = [
-  "All",
-  "Science",
-  "Technology",
-  "Engineering",
-  "Mathematics",
+const categories = ["All", "Science", "Technology", "Engineering", "Mathematics"];
+
+// Mock search results for demonstration
+const mockPapers = [
+  { id: 1, title: "The Future of AI in Technology", category: "Technology" },
+  { id: 2, title: "Quantum Physics and its Applications", category: "Science" },
+  { id: 3, title: "Advancements in Civil Engineering", category: "Engineering" },
+  { id: 4, title: "Mathematical Models in Biology", category: "Mathematics" },
 ];
 
 const Hero = () => {
@@ -15,8 +17,24 @@ const Hero = () => {
   const [filter, setFilter] = useState("All");
   const [showDropdown, setShowDropdown] = useState(false);
 
+  // Filtered search results
+  const filteredPapers = mockPapers.filter((paper) => {
+    const queryWords = searchQuery.toLowerCase().split(" ").filter(Boolean); // Split query into words
+    const titleWords = paper.title.toLowerCase().split(" "); // Split title into words
+
+    // Check if any query word matches a word in the title
+    const matchesQuery = queryWords.some((queryWord) =>
+      titleWords.includes(queryWord)
+    );
+
+    // Check if the category matches the filter
+    const matchesCategory = filter === "All" || paper.category === filter;
+
+    return matchesQuery && matchesCategory;
+  });
+
   return (
-    <section className="bg-gray-900 text-white py-16 px-6 md:px-12 text-center">
+    <section className="bg-gray-900 text-white py-16 px-6 md:px-12 text-center relative">
       <div className="max-w-3xl mx-auto">
         {/* Title */}
         <h1 className="text-4xl md:text-5xl font-bold leading-tight">
@@ -42,6 +60,29 @@ const Hero = () => {
               className="absolute right-3 top-2.5 text-gray-400"
               size={18}
             />
+
+            {/* Search Results Popup */}
+            {searchQuery && (
+              <div className="absolute top-full left-0 mt-2 bg-white text-black shadow-lg rounded-md w-full z-50">
+                {filteredPapers.length > 0 ? (
+                  <ul className="divide-y divide-gray-200">
+                    {filteredPapers.map((paper) => (
+                      <li key={paper.id} className="px-4 py-2 hover:bg-gray-100">
+                        <Link
+                          to={`/browser/${paper.id}`}
+                          className="text-blue-600 hover:underline"
+                        >
+                          {paper.title}
+                        </Link>
+                        <p className="text-sm text-gray-500">{paper.category}</p>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="px-4 py-2 text-gray-500">No results found.</p>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Category Filter Dropdown */}
@@ -71,15 +112,6 @@ const Hero = () => {
             )}
           </div>
         </div>
-
-        {/* Call to Action */}
-        {/* <div className="mt-6">
-          <Link to="/submit">
-            <button className="bg-green-600 hover:bg-green-500 px-6 py-3 rounded-lg text-lg font-semibold">
-              Submit Your Paper
-            </button>
-          </Link>
-        </div> */}
       </div>
     </section>
   );
