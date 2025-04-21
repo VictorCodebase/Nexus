@@ -31,21 +31,23 @@ const PaperList = ({ filteredPapers }) => {
       <div>
         {papers.map((paper, index) => (
           <div className="bg-white p-4 mb-4  shadow-md" key={index}>
-            <h2 className="text-lg font-semibold">{paper.paper_name}</h2>
-            <p className="text-sm text-blue-500">
-              Published: {new Date(paper.created_at).toLocaleDateString()}
-            </p>
-            <a
-              href={`http://localhost:5000/uploads${paper.file_url.replace(
-                "..",
-                ""
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-2 text-blue-600 hover:underline inline-block"
-            >
-              View Paper →
-            </a>
+            <Link href={`/browser/${paper.id}`}>
+              <h2 className="text-lg font-semibold">{paper.paper_name}</h2>
+              <p className="text-sm text-blue-500">
+                Published: {new Date(paper.created_at).toLocaleDateString()}
+              </p>
+              <a
+                href={`http://localhost:5000/uploads${paper.file_url.replace(
+                  "..",
+                  ""
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 text-blue-600 hover:underline inline-block"
+              >
+                View Paper →
+              </a>
+            </Link>
           </div>
         ))}
       </div>

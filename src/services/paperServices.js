@@ -15,3 +15,13 @@ export const getPapers = async () => {
 
 
 }
+//getting papers by id
+export const getPaperById = async (id) => {
+    try {
+        const response = await axios.get(`${API_URL}/papers/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching paper by ID:", error);
+        throw error;
+    }
+}
