@@ -1,7 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const PaperDetails = ({ paper }) => {
+
+const PaperDetails = ({ paper,categoryName }) => {
   const navigate = useNavigate();
   const BASE_URL = "http://localhost:5000"; // or your production URL
 
@@ -29,6 +30,7 @@ const PaperDetails = ({ paper }) => {
       {/* Header */}
       <div className={`relative bg-gradient-to-r ${randomGradient} text-white p-6 rounded-lg shadow-md`}>
         <h1 className="text-3xl font-bold capitalize">{paper.paper_name}</h1>
+        <p className="mt-2 text-lg ">category: <span className="font-bold"> {categoryName}</span></p>
         <p className="mt-2 text-sm">Published on: {new Date(paper.created_at).toLocaleDateString()}</p>
       </div>
 

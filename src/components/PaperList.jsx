@@ -29,9 +29,9 @@ const PaperList = ({ filteredPapers }) => {
 
       {/* List View */}
       <div>
-        {papers.map((paper, index) => (
-          <div className="bg-white p-4 mb-4  shadow-md" key={index}>
-            <Link href={`/browser/${paper.id}`}>
+        {papers.map((paper) => (
+          <div className="bg-white p-4 mb-4  shadow-md" key={paper.paper_id}>
+            <Link to={`/browser/${paper.paper_id}`} key={paper.paper_id}>
               <h2 className="text-lg font-semibold">{paper.paper_name}</h2>
               <p className="text-sm text-blue-500">
                 Published: {new Date(paper.created_at).toLocaleDateString()}
