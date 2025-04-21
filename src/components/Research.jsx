@@ -38,13 +38,13 @@ const ResearchPapers = () => {
             <p className="text-gray-500 text-sm mt-1">
               By {paper.author} • {paper.category}
             </p>
-            <p className="mt-3 text-gray-700 text-sm">{paper.abstract}</p>
+            <p className="mt-3 text-gray-700 text-sm">{paper.abstract.length > 100 ? paper.abstract.slice (0,100) + "...": paper.abstract}</p>
             {/* <p className="mt-3 text-gray-600 text-sm">{paper.introduction}</p> */}
             <a
               href={`/browser/${paper.id}`}
               className="mt-4 inline-flex items-center text-blue-600 font-medium hover:underline"
             >
-              Read More <ArrowRight className="ml-1" size={18} />
+              Read More <ArrowRight className="ml-1" size={18} />what is pairwise disjoint in set theory
             </a>
           </div>
         ))}
