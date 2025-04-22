@@ -33,20 +33,21 @@ export const AuthProvider = ({ children }) => {
 
   const handleLogin = async (email, password) => {
     const response = await login(email, password);
+    
     if (response.token) {
-      const userData = { email };
+      const userData = {
+        email: response.user.email,
+        username: response.user.username,
+        // add more fields if needed
+      };
   
-      localStorage.setItem("user", JSON.stringify(userData)); 
-      
-      setUser(null);  // Force a state reset first
-
-
-      setTimeout(() => setUser(userData), 0); // Set user after a slight delay
-  
-      
+      localStorage.setItem("user", JSON.stringify(userData));
+      setUser(userData);
     }
+  
     return response;
   };
+  
   
 
   const handleSignup = async (institution, fname, lname,username, email, password) => {

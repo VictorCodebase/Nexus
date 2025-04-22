@@ -22,16 +22,38 @@ const AuthForm = () => {
 
     let response;
     if (isSignup) {
-      if (!fname || !lname  ||!institution||!username|| !email || !password) {
+      if (
+        !fname ||
+        !lname ||
+        !institution ||
+        !username ||
+        !email ||
+        !password
+      ) {
         setError("All fields are required for signup");
         setLoading(false);
 
         return;
       }
 
-        console.log("form data", fname, lname, institution, username, email, password);
+      console.log(
+        "form data",
+        fname,
+        lname,
+        institution,
+        username,
+        email,
+        password
+      );
 
-      response = await signup(institution,fname, lname,username, email, password);
+      response = await signup(
+        institution,
+        fname,
+        lname,
+        username,
+        email,
+        password
+      );
     } else {
       if (!email || !password) {
         setError("Email and password are required for login");
@@ -52,18 +74,13 @@ const AuthForm = () => {
       localStorage.setItem("user", JSON.stringify(response.user));
       localStorage.setItem("token", response.token); // Ensure token is stored
 
-     // Reload the page to reflect changes
-
       // Display Welcome Message
       setWelcome(`Welcome ${response.user.fname} ${response.user.lname}`);
 
-      // Added Delay Before Navigation
+      // Wait for context update before navigating
       setTimeout(() => {
-        setWelcome(""); // Clear the welcome message
-      
-
-        navigate("/"); // Navigate after delay
-      }, 1000); // 3-second delay
+        navigate("/"); // or navigate("/submit");
+      }, 100); // slight delay allows context update
     }
   };
 
@@ -111,7 +128,9 @@ const AuthForm = () => {
                 </div>
               </div>
               <div className="mb-4">
-                <label htmlFor="username" className="text-gray-700"> User name</label>
+                <label htmlFor="username" className="text-gray-700">
+                  User name
+                </label>
                 <input
                   type="text"
                   id="username"
@@ -121,7 +140,9 @@ const AuthForm = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="institution" className="text-gray-700"> Institution</label>
+                <label htmlFor="institution" className="text-gray-700">
+                  Institution
+                </label>
                 <input
                   type="text"
                   id="institution"

@@ -7,7 +7,7 @@ const Navbar = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
-  const { user, handleLogout } = useAuth(); // Access user and logout function from AuthContext
+  const { user, handleLogout,loading } = useAuth(); // Access user and logout function from AuthContext
 
   // Toggle dropdown visibility
   const toggleDropdown = () => setShowDropdown(!showDropdown);
@@ -22,6 +22,13 @@ const Navbar = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+  console.log("Navbar rendering. User:", user, "Loading:", loading);
+
+  useEffect(() => {
+    console.log("Navbar rendering. User:", user, "Loading:", loading);
+  }, [user, loading]);
+  
+
 
   return (
     <div className="bg-gray-800 text-white p-4 h-16 flex items-center justify-between">
@@ -34,7 +41,7 @@ const Navbar = () => {
         <Link to="/browser" className="hover:text-gray-300">Articles</Link>
 
         {/* Authenticated User Section */}
-        {user ? (
+        {loading ? null : user ? (
           <div className="relative flex items-center space-x-4" ref={dropdownRef}>
             {/* Submit Button */}
             <Link to="/submit" className="hover:text-gray-300">
