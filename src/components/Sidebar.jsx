@@ -11,8 +11,8 @@ const Sidebar = ({ selectedCategory, setSelectedCategory }) => {
       try {
         const response = await getCategories();
         console.log("Raw response:", response);
-        if (response && Array.isArray(response.data)) {
-          setAllCategories(response.data);
+        if (response && Array.isArray(response)? response: response.data) {
+          setAllCategories(response);
         } else {
           console.warn("Unexpected response shape:", response);
         }

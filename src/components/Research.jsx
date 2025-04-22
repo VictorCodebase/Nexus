@@ -44,7 +44,7 @@ const ResearchPapers = () => {
               href={`/browser/${paper.id}`}
               className="mt-4 inline-flex items-center text-blue-600 font-medium hover:underline"
             >
-              Read More <ArrowRight className="ml-1" size={18} />what is pairwise disjoint in set theory
+              Read More <ArrowRight className="ml-1" size={18} />
             </a>
           </div>
         ))}

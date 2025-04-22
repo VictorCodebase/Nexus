@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { UploadCloud } from "lucide-react";
+import { uploadPapers } from "../services/paperServices";
 
 const Submit = () => {
   const [file, setFile] = useState(null);
@@ -32,41 +33,51 @@ const Submit = () => {
     formData.append("file", file);
     formData.append("name", title);
     formData.append("description", description);
-    formData.append("category", category);
-    formData.append("publisher", publisher);
+    formData.append("category", Number(category)); // ensure it's a number
+    formData.append("publisher", Number(publisher)); // must match Postman format
+
     formData.append(
       "tags",
-      JSON.stringify(tags.split(",").map((tag) => tag.trim()))
+      JSON.stringify(
+        tags
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter((tag) => tag !== "")
+      )
     );
+
     formData.append(
       "coauthors",
-      JSON.stringify(coauthors.split(",").map((author) => author.trim()))
+      JSON.stringify(
+        coauthors
+          .split(",") // convert comma-separated string to array
+          .map((c) => c.trim()) // trim whitespace
+          .filter((c) => c !== "") // remove empty strings
+      )
     );
+
     formData.append("meta", meta);
 
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/api/papers/local",
-        formData,
-        {
-          headers: {
-           "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+    // Check if meta is an object and convert it to a string
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
 
-      if (response.status === 200) {
-        setSuccess("File uploaded successfully!");
-        setFile(null);
-        setTitle("");
-        setDescription("");
-        setCategory("");
-        setPublisher("");
-        setTags("");
-        setCoauthors("");
-        setMeta("");
-      }
+    try {
+      await uploadPapers(formData, token);
+      setSuccess("File uploaded successfully!");
+      setFile(null);
+      setTitle("");
+      setDescription("");
+      setCategory("");
+      setPublisher("");
+      setTags("");
+      setCoauthors("");
+      setMeta("");
+
+      setTimeout(() => {
+        setSuccess("");
+      }, 3000);
     } catch (err) {
       console.log("this is the error", err);
       setError(
@@ -198,6 +209,9 @@ const Submit = () => {
           <div className="col-span-2">
             <button
               type="submit"
+              onClick={() => {
+                console.log("submitting");
+              }}
               className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-semibold"
             >
               Submit Document

@@ -25,3 +25,23 @@ export const getPaperById = async (id) => {
         throw error;
     }
 }
+
+// posting papers
+export const uploadPapers = async(formData, token) => {
+    try{
+        const response = await axios.post(
+            `${API_URL}/papers/local`,
+            formData,
+            {
+                headers :{
+                    "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${token}`,
+                }
+            }
+        )
+        return response.data;
+    
+    }catch(err){
+        throw err;
+    }
+} 

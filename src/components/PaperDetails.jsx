@@ -19,14 +19,7 @@ const PaperDetails = ({ paper,categoryName }) => {
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
-      {/* Back Button */}
-      <button
-        onClick={() => navigate(-1)}
-        className="text-blue-600 flex items-center gap-2 mb-4 hover:underline"
-      >
-        ⬅ Back
-      </button>
-
+     
       {/* Header */}
       <div className={`relative bg-gradient-to-r ${randomGradient} text-white p-6 rounded-lg shadow-md`}>
         <h1 className="text-3xl font-bold capitalize">{paper.paper_name}</h1>
