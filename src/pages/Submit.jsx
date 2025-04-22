@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { UploadCloud } from "lucide-react";
 import { uploadPapers } from "../services/paperServices";
+import { getCategories } from "../services/categoriesServices";
+import { getUsers } from "../services/userServices";
 
 const Submit = () => {
   const [file, setFile] = useState(null);
@@ -14,10 +16,29 @@ const Submit = () => {
   const [meta, setMeta] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [users, setUsers] = useState([]);
 
   const token = localStorage.getItem("token");
 
   const handleFileChange = (e) => setFile(e.target.files[0]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const categoriesData = await getCategories();
+      setCategories(categoriesData);
+    };
+    fetchCategories();
+  }, []); //this will run once the components mount on the page
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const usersData = await getUsers();
+      setUsers(usersData);
+    };
+    fetchUsers();
+  }, []);
+  console.log(users);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -86,6 +107,14 @@ const Submit = () => {
       );
     }
   };
+  const capitalize = (text) => {
+    if (!text) return "";
+    return text
+      .split(" ")
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+  
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center px-4 py-4">
@@ -126,13 +155,19 @@ const Submit = () => {
             <label className="block text-sm font-semibold text-gray-700">
               Category *
             </label>
-            <input
-              type="text"
+            <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               className="mt-1 w-full rounded-lg border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
-            />
+            >
+              <option value="">Select Category</option>
+              {categories.map((cat) => (
+                <option key={cat.category_id} value={cat.category_id}>
+                  {cat.category}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="col-span-2">
             <label className="block text-sm font-semibold text-gray-700">
@@ -150,14 +185,21 @@ const Submit = () => {
             <label className="block text-sm font-semibold text-gray-700">
               Publisher *
             </label>
-            <input
-              type="text"
+            <select
               value={publisher}
               onChange={(e) => setPublisher(e.target.value)}
               className="mt-1 w-full rounded-lg border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
-            />
+            >
+              <option value="">Select Publisher</option>
+              {users.map((user) => (
+                <option key={user.id} value={user.id}>
+                 { capitalize(user.username || user.email)}
+                </option>
+              ))}
+            </select>
           </div>
+
           <div className="col-span-1">
             <label className="block text-sm font-semibold text-gray-700">
               Tags (comma-separated)
