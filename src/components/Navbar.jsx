@@ -59,7 +59,7 @@ const Navbar = () => {
             </button>
 
             {showDropdown && (
-              <div className="absolute right-0 top-5 mt-2 w-40 bg-white text-black shadow-md rounded-lg border">
+              <div className="absolute right-0 top-5 mt-2 w-40 bg-white text-black shadow-md z-50 rounded-lg border">
                 <Link
                   to="/profile"
                   className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100"
