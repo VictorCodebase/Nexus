@@ -57,3 +57,19 @@ export const getPapersByUser = async(id) => {
         throw err;
     }
 }
+export const deletePapers = async(id) => {
+    try{
+
+        const token = localStorage.getItem("token");
+        const response = await axios.delete(`${API_URL}/papers/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }     
+               }
+        );
+        return response.data;
+    }catch(err){
+        console.error("Error deleting paper:", err);
+        throw err;
+    }
+}

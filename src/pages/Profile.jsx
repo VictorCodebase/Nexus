@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { getPapersByUser } from "../services/paperServices";
+import { getPapersByUser,deletePapers } from "../services/paperServices";
 import { Link } from "react-router-dom";
 import { FiEdit, FiTrash } from "react-icons/fi";
+
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -28,11 +29,22 @@ const Profile = () => {
   };
 
   const handleEdit = (paperId) => {
-    console.log(`Edit paper with ID: ${paperId}`);
+  console.log(`Edit paper with ID: ${paperId}`);
   };
 
-  const handleDelete = (paperId) => {
-    console.log(`Delete paper with ID: ${paperId}`);
+  const handleDelete =async (paperId) => {
+    try{
+      await deletePapers(paperId)
+
+      //update the state for the deleted paper
+      setPapers((prevPapers) => prevPapers.filter((paper)=>paper.paper_id !==paperId));
+
+      console.log(`Deleted paper with ID: ${paperId}`);
+    }catch(err){
+      console.error("Error deleting paper:", err);
+      setError("Failed to delete paper");
+    }
+    
   };
 
   if (!user) {
