@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getPapersByUser } from "../services/paperServices";
 import { Link } from "react-router-dom";
+import { FiEdit, FiTrash } from "react-icons/fi";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -11,11 +12,11 @@ const Profile = () => {
     // Fetching the user data from localStorage
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
-      const parsedUser = JSON.parse(storedUser); // Define parsedUser here
+      const parsedUser = JSON.parse(storedUser);
       setUser(parsedUser);
 
       // Fetching the papers by user ID
-      fetchUserPapers(parsedUser.id); // Use parsedUser.id
+      fetchUserPapers(parsedUser.id);
     }
   }, []);
 
@@ -28,7 +29,16 @@ const Profile = () => {
       setError("Failed to fetch user papers");
     }
   };
-  console.log("this are the user papers", papers);
+
+  const handleEdit = (paperId) => {
+    console.log(`Edit paper with ID: ${paperId}`);
+    // Add navigation to edit page here
+  };
+
+  const handleDelete = (paperId) => {
+    console.log(`Delete paper with ID: ${paperId}`);
+    // Add delete functionality here
+  };
 
   if (!user) {
     return (
@@ -93,20 +103,35 @@ const Profile = () => {
         {/* Displaying the papers */}
         <div className="mt-8">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">Your Papers</h2>
+          {error && <p className="text-red-500 mb-4">{error}</p>}
           {papers.length > 0 ? (
             papers.map((paper) => (
-              <div key={paper.id} className="bg-gray-100 p-4 rounded-lg mb-4">
-                <Link
-                  to={`/browser/${paper.paper_id}`}
-                  className="text-blue-600 hover:underline"
-                >
-                <h3 className="text-xl font-semibold text-blue-500">
-                  {paper.paper_name}
-                </h3>
-                </Link>
-                <p className="text-sm text-gray-600">
-                  Published: {new Date(paper.created_at).toLocaleDateString()}
-                </p>
+              <div
+                key={paper.paper_id}
+                className="bg-gray-100 p-4 rounded-lg mb-4 flex items-center justify-between"
+              >
+                <div>
+                  <h3 className="text-xl font-semibold text-blue-500 hover:underline">
+                    <Link to={`/browser/${paper.paper_id}`}>{paper.paper_name}</Link>
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    Published: {new Date(paper.created_at).toLocaleDateString()}
+                  </p>
+                </div>
+                <div className="flex space-x-4 ml-auto">
+                  <button
+                    onClick={() => handleEdit(paper.paper_id)}
+                    className="text-blue-500 hover:text-blue-700"
+                  >
+                    <FiEdit size={20} />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(paper.paper_id)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    <FiTrash size={20} />
+                  </button>
+                </div>
               </div>
             ))
           ) : (
