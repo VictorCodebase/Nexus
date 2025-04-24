@@ -57,6 +57,22 @@ export const getPapersByUser = async(id) => {
         throw err;
     }
 }
+export const editPapers = async(id) => {
+    try{
+        const token = localStorage.getItem("token");
+        const response =await axios.put(`${API_URL}/papers/${id}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            }
+        )
+        return response.data;
+    }catch{
+        console.error("Error editing paper:", err);
+        throw err;
+    }
+}
 export const deletePapers = async(id) => {
     try{
 

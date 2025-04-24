@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { getPapersByUser,deletePapers } from "../services/paperServices";
+import { getPapersByUser, deletePapers } from "../services/paperServices";
 import { Link } from "react-router-dom";
 import { FiEdit, FiTrash } from "react-icons/fi";
-
+import EditModal from "../components/editModal"; // Import the EditModal component
 
 const Profile = () => {
   const [user, setUser] = useState(null);
   const [papers, setPapers] = useState([]);
   const [error, setError] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Control modal visibility
+  const [paperToEdit, setPaperToEdit] = useState(null); // Store the paper to edit
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -29,22 +31,42 @@ const Profile = () => {
   };
 
   const handleEdit = (paperId) => {
-  console.log(`Edit paper with ID: ${paperId}`);
+    const selectedPaper = papers.find((paper) => paper.paper_id === paperId);
+    setPaperToEdit(selectedPaper); // Set the selected paper to edit
+    setIsModalOpen(true); // Open the modal
   };
 
-  const handleDelete =async (paperId) => {
-    try{
-      await deletePapers(paperId)
+  const handleDelete = async (paperId) => {
+    try {
+      await deletePapers(paperId);
 
-      //update the state for the deleted paper
-      setPapers((prevPapers) => prevPapers.filter((paper)=>paper.paper_id !==paperId));
+      // Update the state for the deleted paper
+      setPapers((prevPapers) =>
+        prevPapers.filter((paper) => paper.paper_id !== paperId)
+      );
 
       console.log(`Deleted paper with ID: ${paperId}`);
-    }catch(err){
+    } catch (err) {
       console.error("Error deleting paper:", err);
       setError("Failed to delete paper");
     }
-    
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // Close the modal
+    setPaperToEdit(null); // Clear the selected paper
+  };
+
+  const handleEditSubmit = async (formData) => {
+    try {
+      // Call the API to update the paper
+      console.log("Updated paper data:", formData);
+      // You can call the edit API here and update the state accordingly
+      setIsModalOpen(false); // Close the modal after submission
+    } catch (err) {
+      console.error("Error updating paper:", err);
+      setError("Failed to update the paper");
+    }
   };
 
   if (!user) {
@@ -109,10 +131,13 @@ const Profile = () => {
               >
                 <div>
                   <h3 className="text-lg font-semibold text-blue-600 hover:underline">
-                    <Link to={`/browser/${paper.paper_id}`}>{paper.paper_name}</Link>
+                    <Link to={`/browser/${paper.paper_id}`}>
+                      {paper.paper_name}
+                    </Link>
                   </h3>
                   <p className="text-sm text-gray-600">
-                    Published: {new Date(paper.created_at).toLocaleDateString()}
+                    Published:{" "}
+                    {new Date(paper.created_at).toLocaleDateString()}
                   </p>
                 </div>
                 <div className="flex space-x-4">
@@ -136,6 +161,16 @@ const Profile = () => {
           )}
         </div>
       </div>
+
+      {/* Edit Modal */}
+      {isModalOpen && (
+        <EditModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onSubmit={handleEditSubmit}
+          paperData={paperToEdit} // Pass the selected paper data to the modal
+        />
+      )}
     </div>
   );
 };
