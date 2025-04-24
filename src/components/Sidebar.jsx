@@ -1,74 +1,88 @@
-import React, { useState, useEffect } from 'react';
-import { getCategories } from "../services/categoriesServices";
+import React, { useState,useEffect } from "react";
+import Sidebar from "../components/Sidebar";
+import PaperList from "../components/PaperList";
+import { getPapers } from "../services/paperServices";
+import {getCategories} from "../services/categoriesServices";
 
-const Sidebar = ({ selectedCategory, setSelectedCategory }) => {
-  const [allCategories, setAllCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const Browser = () => {
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [researchPapers, setResearchPapers] = useState([]);
+  const [filteredPapers, setFilteredPapers] = useState([]);
+  const [ categories, setCategories] = useState([]);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await getCategories();
-        console.log("Raw response:", response);
-        if (response && Array.isArray(response)? response: response.data) {
-          setAllCategories(response);
-        } else {
-          console.warn("Unexpected response shape:", response);
-        }
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-        setError("Failed to load categories.");
-      } finally {
-        setLoading(false);
+  // fetching the papers on mount
+  
+  useEffect (() => {
+    const fetchPapers = async () => {
+      try{
+        const papers = await getPapers();
+        setResearchPapers(papers.data);
+        setFilteredPapers(papers.data);
+      }catch(err){
+        console.error("Error fetching papers:", err);
       }
     };
-    fetchCategories();
+    fetchPapers();
   }, []);
+  console.log(researchPapers)
 
-  console.log("Sidebar Render → selectedCategory:", selectedCategory);
-  console.log("Sidebar Render → allCategories:", allCategories);
+  useEffect (()=> {
+    const fetchCategories = async () => {
+      try{
+        const categoriesData = await getCategories();
+        setCategories("All", ...categoriesData.data.map((cat)=> cat.category_name));
+      }catch(err){
+        console.error("Error fetching categories:", err);
+      }
+    }
+    fetchCategories();
+  },[])
+
+
+//  filtering the papers whenever category is selected or searchterm is inputed
+// ;
+  useEffect(()=> {
+    const filtered = researchPapers.filter((paper) =>
+      selectedCategory === "All" ? true: paper.category === selectedCategory
+
+    )
+    .filter((paper) => 
+    
+      paper.paper_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      paper.description.toLowercase().includes(searchTerm.toLowerCase())
+    
+    );
+    setFilteredPapers(filtered);  
+  },[selectedCategory, searchTerm, researchPapers]);
+
+  console.log("this are the filtered papers",filteredPapers);
 
   return (
-    <aside className="w-1/4 bg-white px-4 py-4 shadow-md rounded-md h-full">
-      <h1 className="text-md font-bold mb-2">Filter By Categories</h1>
+    <div className="flex h-screen bg-gray-100 p-4 gap-4">
+      {/* Sidebar component */}
+      <Sidebar
+        categories={categories}
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+      />
 
-      {loading && <p>Loading categories...</p>}
-      {error && <p className="text-red-500">{error}</p>}
+      {/* Main Content */}
+      <main className="w-3/4 bg-white px-6 py-4 shadow-md rounded-md h-full overflow-y-auto">
+        {/* Search Bar */}
+        <input
+          type="text"
+          placeholder="Search papers..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full p-2 mb-4 border border-gray-300 rounded-md"
+        />
 
-      <ul>
-        <li
-          className={`py-2 cursor-pointer font-medium ${
-            selectedCategory === 'All' ? 'text-blue-600' : 'hover:text-blue-600'
-          }`}
-          onClick={() => setSelectedCategory('All')}
-        >
-          All
-        </li>
-
-        {allCategories.length > 0 ? (
-          allCategories.map((category) => (
-            <li
-              key={category.category_id}
-              className={`py-1 cursor-pointer border-b border-gray-200 ${
-                selectedCategory === category.category_id
-                  ? 'text-blue-600 font-semibold'
-                  : 'text-gray-700 hover:text-blue-500'
-              }`}
-              onClick={() => {
-                console.log("Clicked:", category.category_id);
-                setSelectedCategory(category.category_id);
-              }}
-            >
-              {category.category}
-            </li>
-          ))
-        ) : (
-          !loading && <li className="text-sm text-gray-400">No categories found.</li>
-        )}
-      </ul>
-    </aside>
+        {/* Paper List */}
+        <PaperList filteredPapers={filteredPapers} />
+      </main>
+    </div>
   );
 };
 
-export default Sidebar;
+export default Browser;

@@ -41,6 +41,7 @@ const Submit = () => {
     };
     fetchData();
   }, []);
+  console.log(availableTags)
 
   const handleAddTag = (tag) => {
     if (tag && !tags.includes(tag)) {
