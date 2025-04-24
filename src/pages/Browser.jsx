@@ -30,7 +30,12 @@ const Browser = () => {
     const fetchCategories = async () => {
       try {
         const categoriesData = await getCategories();
-        setCategories(["All", ...categoriesData.data.map((cat) => cat.category_name)]);
+        console.log("this are the categories", categoriesData);
+
+        setCategories([
+          "All",
+          ...categoriesData.map((cat) => cat.category),
+        ]);
       } catch (err) {
         console.error("Error fetching categories:", err);
       }
@@ -44,9 +49,14 @@ const Browser = () => {
       .filter((paper) =>
         selectedCategory === "All" ? true : paper.category === selectedCategory
       )
-      .filter((paper) =>
-        (paper.paper_name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
-        (paper.description?.toLowerCase() || "").includes(searchTerm.toLowerCase())
+      .filter(
+        (paper) =>
+          (paper.paper_name?.toLowerCase() || "").includes(
+            searchTerm.toLowerCase()
+          ) ||
+          (paper.description?.toLowerCase() || "").includes(
+            searchTerm.toLowerCase()
+          )
       );
     setFilteredPapers(filtered);
   }, [selectedCategory, searchTerm, researchPapers]);
