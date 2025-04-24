@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { UploadCloud } from "lucide-react";
 import { uploadPapers } from "../services/paperServices";
 import { getCategories } from "../services/categoriesServices";
 import { getUsers } from "../services/userServices";
+import { getTags } from "../services/tagServices";
 
 const Submit = () => {
   const [file, setFile] = useState(null);
@@ -11,34 +11,57 @@ const Submit = () => {
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [publisher, setPublisher] = useState("");
-  const [tags, setTags] = useState("");
+  const [tags, setTags] = useState([]);
+  const [tagInput, setTagInput] = useState("");
   const [coauthors, setCoauthors] = useState("");
   const [meta, setMeta] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [categories, setCategories] = useState([]);
   const [users, setUsers] = useState([]);
+  const [availableTags, setAvailableTags] = useState([]);
 
   const token = localStorage.getItem("token");
 
   const handleFileChange = (e) => setFile(e.target.files[0]);
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      const categoriesData = await getCategories();
-      setCategories(categoriesData);
+    const fetchData = async () => {
+      try {
+        const categoriesData = await getCategories();
+        setCategories(categoriesData || []);
+        const usersData = await getUsers();
+        setUsers(usersData || []);
+        const tagsData = await getTags();
+        setAvailableTags(tagsData.data || []);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setError("Failed to fetch data. Please try again.");
+      }
     };
-    fetchCategories();
-  }, []); //this will run once the components mount on the page
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      const usersData = await getUsers();
-      setUsers(usersData);
-    };
-    fetchUsers();
+    fetchData();
   }, []);
-  console.log(users);
+
+  const handleAddTag = (tag) => {
+    if (tag && !tags.includes(tag)) {
+      setTags([...tags, tag]);
+    }
+  };
+
+  const handleTagKeyDown = (e) => {
+    if (["Enter", ","].includes(e.key)) {
+      e.preventDefault();
+      const newTag = tagInput.trim();
+      if (newTag && !tags.includes(newTag)) {
+        setTags([...tags, newTag]);
+        setTagInput("");
+      }
+    }
+  };
+
+  const handleRemoveTag = (tagToRemove) => {
+    setTags(tags.filter((t) => t !== tagToRemove));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -54,35 +77,19 @@ const Submit = () => {
     formData.append("file", file);
     formData.append("name", title);
     formData.append("description", description);
-    formData.append("category", Number(category)); // ensure it's a number
-    formData.append("publisher", Number(publisher)); // must match Postman format
-
-    formData.append(
-      "tags",
-      JSON.stringify(
-        tags
-          .split(",")
-          .map((tag) => tag.trim())
-          .filter((tag) => tag !== "")
-      )
-    );
-
+    formData.append("category", Number(category));
+    formData.append("publisher", Number(publisher));
+    formData.append("tags", JSON.stringify(tags));
     formData.append(
       "coauthors",
       JSON.stringify(
         coauthors
-          .split(",") // convert comma-separated string to array
-          .map((c) => c.trim()) // trim whitespace
-          .filter((c) => c !== "") // remove empty strings
+          .split(",")
+          .map((c) => c.trim())
+          .filter((c) => c !== "")
       )
     );
-
     formData.append("meta", meta);
-
-    // Check if meta is an object and convert it to a string
-    for (let [key, value] of formData.entries()) {
-      console.log(`${key}:`, value);
-    }
 
     try {
       await uploadPapers(formData, token);
@@ -92,29 +99,18 @@ const Submit = () => {
       setDescription("");
       setCategory("");
       setPublisher("");
-      setTags("");
+      setTags([]);
       setCoauthors("");
       setMeta("");
-
-      setTimeout(() => {
-        setSuccess("");
-      }, 3000);
+      setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
-      console.log("this is the error", err);
+      console.error("Upload error:", err);
       setError(
         err.response?.data?.error ||
           "Failed to upload the file. Please try again."
       );
     }
   };
-  const capitalize = (text) => {
-    if (!text) return "";
-    return text
-      .split(" ")
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  };
-  
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center px-4 py-4">
@@ -127,6 +123,7 @@ const Submit = () => {
             Fill in the form below to upload your research paper
           </p>
         </div>
+
         {error && (
           <p className="text-red-600 mb-4 text-center font-medium">{error}</p>
         )}
@@ -135,6 +132,7 @@ const Submit = () => {
             {success}
           </p>
         )}
+
         <form
           onSubmit={handleSubmit}
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
@@ -147,10 +145,11 @@ const Submit = () => {
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="mt-1 w-full rounded-lg border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-1 w-full rounded-lg border px-3 py-2"
               required
             />
           </div>
+
           <div className="col-span-1">
             <label className="block text-sm font-semibold text-gray-700">
               Category *
@@ -158,7 +157,7 @@ const Submit = () => {
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="mt-1 w-full rounded-lg border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-1 w-full rounded-lg border px-3 py-2"
               required
             >
               <option value="">Select Category</option>
@@ -169,6 +168,7 @@ const Submit = () => {
               ))}
             </select>
           </div>
+
           <div className="col-span-2">
             <label className="block text-sm font-semibold text-gray-700">
               Description *
@@ -177,35 +177,61 @@ const Submit = () => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
-              className="mt-1 w-full rounded-lg border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-1 w-full rounded-lg border px-3 py-2"
               required
             />
-          </div>
-          <div className="col-span-1">
-            <label className="block text-sm font-semibold text-gray-700">
-              Publisher *
-            </label>
-            <input 
-              type="text"
-              value={publisher}
-              onChange={(e) => setPublisher(e.target.value)}
-              className="mt-1 w-full rounded-lg border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-           
           </div>
 
           <div className="col-span-1">
             <label className="block text-sm font-semibold text-gray-700">
-              Tags (comma-separated)
+              Publisher *
             </label>
             <input
               type="text"
-              value={tags}
-              onChange={(e) => setTags(e.target.value)}
-              className="mt-1 w-full rounded-lg border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={publisher}
+              onChange={(e) => setPublisher(e.target.value)}
+              className="mt-1 w-full rounded-lg border px-3 py-2"
+              required
             />
           </div>
+
+          <div className="col-span-1">
+            <label className="block text-sm font-semibold text-gray-700">
+              Tags (select or input custom)
+            </label>
+            <div className="flex flex-wrap gap-2 mt-1">
+              {tags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="bg-blue-200 text-blue-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2"
+                >
+                  {tag}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveTag(tag)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    &times;
+                  </button>
+                </span>
+              ))}
+            </div>
+            <input
+              list="tag-suggestions"
+              type="text"
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={handleTagKeyDown}
+              placeholder="Start typing to see suggestions or add custom tags"
+              className="mt-1 w-full rounded-lg border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <datalist id="tag-suggestions">
+              {availableTags.map((tag) => (
+                <option key={tag.tag_id} value={tag.tag_name} />
+              ))}
+            </datalist>
+          </div>
+
           <div className="col-span-1">
             <label className="block text-sm font-semibold text-gray-700">
               Coauthors (comma-separated)
@@ -214,9 +240,10 @@ const Submit = () => {
               type="text"
               value={coauthors}
               onChange={(e) => setCoauthors(e.target.value)}
-              className="mt-1 w-full rounded-lg border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-1 w-full rounded-lg border px-3 py-2"
             />
           </div>
+
           <div className="col-span-1">
             <label className="block text-sm font-semibold text-gray-700">
               Meta Information
@@ -225,9 +252,10 @@ const Submit = () => {
               value={meta}
               onChange={(e) => setMeta(e.target.value)}
               rows={2}
-              className="mt-1 w-full rounded-lg border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-1 w-full rounded-lg border px-3 py-2"
             />
           </div>
+
           <div className="col-span-2">
             <label className="block text-sm font-semibold text-gray-700">
               Upload File *
@@ -243,12 +271,10 @@ const Submit = () => {
               />
             </div>
           </div>
+
           <div className="col-span-2">
             <button
               type="submit"
-              onClick={() => {
-                console.log("submitting");
-              }}
               className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-semibold"
             >
               Submit Document
