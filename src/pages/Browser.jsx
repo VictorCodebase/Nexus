@@ -32,9 +32,10 @@ const Browser = () => {
         const categoriesData = await getCategories();
         console.log("this are the categories", categoriesData);
 
+        // Add an "All" option at the start
         setCategories([
-          "All",
-          ...categoriesData.map((cat) => cat.category),
+          { category_id: "All", category: "All" }, // Add 'All' category for global filtering
+          ...categoriesData, // Categories from API
         ]);
       } catch (err) {
         console.error("Error fetching categories:", err);
@@ -47,7 +48,9 @@ const Browser = () => {
   useEffect(() => {
     const filtered = researchPapers
       .filter((paper) =>
-        selectedCategory === "All" ? true : paper.category === selectedCategory
+        selectedCategory === "All" // If 'All' category is selected, show all papers
+          ? true
+          : paper.category_id === selectedCategory // Filter by category_id
       )
       .filter(
         (paper) =>

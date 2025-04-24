@@ -1,5 +1,3 @@
-import React from "react";
-
 const Sidebar = ({ categories, selectedCategory, setSelectedCategory }) => {
   return (
     <aside className="w-1/4 bg-white px-6 py-6 shadow-lg rounded-lg h-full">
@@ -8,15 +6,15 @@ const Sidebar = ({ categories, selectedCategory, setSelectedCategory }) => {
         {/* Render categories dynamically */}
         {categories.map((category) => (
           <li
-            key={category.category_id || category} // Handle cases where category is a string
+            key={category.category_id} // Use category_id for uniqueness
             className={`py-2 px-4 rounded-md cursor-pointer font-medium transition-all duration-200 ${
-              selectedCategory === category.category_id || selectedCategory === category
+              selectedCategory === category.category_id
                 ? "bg-blue-100 text-blue-600 font-semibold"
                 : "text-gray-700 hover:bg-gray-100 hover:text-blue-500"
             }`}
-            onClick={() => setSelectedCategory(category.category_id || category)} // Handle both category_id and string
+            onClick={() => setSelectedCategory(category.category_id)} // Set selected category by category_id
           >
-            {category.category_name || category} {/* Handle both category_name and string */}
+            {category.category} {/* Display the category name */}
           </li>
         ))}
       </ul>
