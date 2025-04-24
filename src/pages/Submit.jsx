@@ -185,19 +185,14 @@ const Submit = () => {
             <label className="block text-sm font-semibold text-gray-700">
               Publisher *
             </label>
-            <select
+            <input 
+              type="text"
               value={publisher}
               onChange={(e) => setPublisher(e.target.value)}
               className="mt-1 w-full rounded-lg border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
-            >
-              <option value="">Select Publisher</option>
-              {users.map((user) => (
-                <option key={user.id} value={user.id}>
-                 { capitalize(user.username || user.email)}
-                </option>
-              ))}
-            </select>
+            />
+           
           </div>
 
           <div className="col-span-1">

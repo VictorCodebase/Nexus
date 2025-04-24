@@ -1,11 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-
-const PaperDetails = ({ paper,categoryName }) => {
+const PaperDetails = ({ paper, categoryName, publisherName, tagNames }) => {
   const navigate = useNavigate();
   const BASE_URL = "http://localhost:5000"; // or your production URL
-
 
   const gradients = [
     "from-blue-500 to-purple-500",
@@ -19,21 +17,37 @@ const PaperDetails = ({ paper,categoryName }) => {
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
-     
+    
+
       {/* Header */}
-      <div className={`relative bg-gradient-to-r ${randomGradient} text-white p-6 rounded-lg shadow-md`}>
+      <div
+        className={`relative bg-gradient-to-r ${randomGradient} text-white p-6 rounded-lg shadow-md`}
+      >
         <h1 className="text-3xl font-bold capitalize">{paper.paper_name}</h1>
-        <p className="mt-2 text-lg ">category: <span className="font-bold"> {categoryName}</span></p>
-        <p className="mt-2 text-sm">Published on: {new Date(paper.created_at).toLocaleDateString()}</p>
+        <p className="mt-2 text-lg">
+          Category: <span className="font-bold">{categoryName || "Unknown"}</span>
+        </p>
+        <p className="mt-2 text-lg">
+          Publisher: <span className="font-bold">{publisherName || "Unknown"}</span>
+        </p>
+        <p className="mt-2 text-sm">
+          Published on:{" "}
+          {new Date(paper.created_at).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
+        </p>
       </div>
 
       {/* Details */}
       <div className="mt-6 space-y-6">
-
         {/* Description */}
         <section>
           <h2 className="text-2xl font-semibold text-gray-800">Description</h2>
-          <p className="mt-2 text-gray-700 leading-relaxed">{paper.description}</p>
+          <p className="mt-2 text-gray-700 leading-relaxed">
+            {paper.description || "No description available."}
+          </p>
         </section>
 
         {/* File link */}
@@ -44,15 +58,17 @@ const PaperDetails = ({ paper,categoryName }) => {
               href={`${BASE_URL}${paper.file_url.replace("..", "")}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-500 underline mt-2 inline-block"
+              className="mt-2 inline-block"
             >
-              View Paper PDF
+              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                Download Paper
+              </button>
             </a>
           </section>
         )}
 
         {/* Co-authors */}
-        {paper.coauthors && paper.coauthors.length > 0 && (
+        {paper.coauthors && paper.coauthors.length > 0 ? (
           <section>
             <h2 className="text-xl font-semibold text-gray-800">Co-authors</h2>
             <ul className="list-disc list-inside mt-2 text-gray-700">
@@ -61,14 +77,19 @@ const PaperDetails = ({ paper,categoryName }) => {
               ))}
             </ul>
           </section>
+        ) : (
+          <section>
+            <h2 className="text-xl font-semibold text-gray-800">Co-authors</h2>
+            <p className="text-gray-700">No co-authors listed.</p>
+          </section>
         )}
 
         {/* Tags */}
-        {paper.tags && paper.tags.length > 0 && (
+        {tagNames && tagNames.length > 0 ? (
           <section>
             <h2 className="text-xl font-semibold text-gray-800">Tags</h2>
             <div className="mt-2 flex flex-wrap gap-2">
-              {paper.tags.map((tag, index) => (
+              {tagNames.map((tag, index) => (
                 <span
                   key={index}
                   className="bg-blue-200 text-blue-800 px-3 py-1 rounded-full text-sm font-medium"
@@ -77,6 +98,19 @@ const PaperDetails = ({ paper,categoryName }) => {
                 </span>
               ))}
             </div>
+          </section>
+        ) : (
+          <section>
+            <h2 className="text-xl font-semibold text-gray-800">Tags</h2>
+            <p className="text-gray-700">No tags available.</p>
+          </section>
+        )}
+
+        {/* Metadata */}
+        {paper.meta && (
+          <section>
+            <h2 className="text-xl font-semibold text-gray-800">Metadata</h2>
+            <p className="mt-2 text-gray-700">{paper.meta}</p>
           </section>
         )}
       </div>
