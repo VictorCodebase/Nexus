@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { UploadCloud } from "lucide-react";
-import { getCategories } from "../services/categoriesServices"; // Import the API function to fetch categories
+import { getCategories } from "../services/categoriesServices"; 
+import { updatePaper } from "../services/paperServices"; // Import the updatePaper function
 
 const EditModal = ({ isOpen, onClose, onSubmit, paperData }) => {
   const [file, setFile] = useState(null);
@@ -14,12 +15,14 @@ const EditModal = ({ isOpen, onClose, onSubmit, paperData }) => {
 
   console.log("this is the paper data", paperData);
 
+
+
   // Fetch categories from the database
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const response = await getCategories(); // Fetch categories from the API
-        setCategories(response || []); // Set the categories in state
+        setCategories(response|| []); // Set the categories in state
       } catch (err) {
         console.error("Error fetching categories:", err);
         setError("Failed to fetch categories.");
@@ -40,6 +43,8 @@ const EditModal = ({ isOpen, onClose, onSubmit, paperData }) => {
     }
   }, [paperData]);
 
+  console.log("this is the paper data", paperData);
+
   const handleFileChange = (e) => setFile(e.target.files[0]);
 
   const handleTagKeyDown = (e) => {
@@ -57,24 +62,53 @@ const EditModal = ({ isOpen, onClose, onSubmit, paperData }) => {
     setTags(tags.filter((t) => t !== tagToRemove));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setError("");
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent the default form submission behavior
+    setError(""); // Clear any previous errors
 
+    // Validate required fields
     if (!title || !description || !category) {
-      setError("All required fields must be filled.");
-      return;
+        setError("All required fields must be filled.");
+        return;
     }
 
-    const formData = new FormData();
-    if (file) formData.append("file", file); // Only include the file if it's updated
-    formData.append("title", title);
-    formData.append("description", description);
-    formData.append("category", category); // Send the category ID
-    formData.append("tags", JSON.stringify(tags));
+    // Construct the JSON payload
+    const payload = {
+        id: paperData.paper_id, // Include the paper ID
+        category, // Include the category ID
+        publisher: paperData.publisher_id, // Include the publisher ID
+        name: title, // Include the paper name
+        description, // Include the description
+        tags, // Include the tags array
+    };
 
-    onSubmit(formData); // Pass the form data to the parent component
-  };
+    // If a file is selected, include it in the payload
+    if (file) {
+        payload.file = file; // Add the file to the payload (if supported by the backend)
+    }
+
+    try {
+        // Call the API to update the paper
+        const response = await updatePaper(payload); // Call the updatePaper function
+        console.log("Updated paper response:", response);
+
+        // Notify the parent component of the successful update
+        onSubmit(); // Call the parent component's onSubmit function
+        onClose(); // Close the modal
+    } catch (err) {
+        console.error("Error updating paper:", err);
+        setError("Failed to update the paper. Please try again."); // Display an error message
+    }
+};
+
+  console.log("this is the form ", {
+    title,
+    description,
+
+    category,
+    tags,
+  });
+  
 
   if (!isOpen) return null;
 

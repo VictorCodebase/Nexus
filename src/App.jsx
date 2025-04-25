@@ -7,7 +7,6 @@ import { researchPapers } from "./utils/data";
 import Submit from "./pages/Submit";
 import SinglePage from "./pages/SinglePage";
 import Profile from "./pages/Profile";
-import Edit from "./pages/edit";
 
 function App() {
   
@@ -23,7 +22,7 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="submit" element={<Submit />} />
           <Route path="profile" element= {<Profile/>}/>
-          <Route path="edit" element={<Edit/>}/>
+        
         </Route>
       </Routes>
     </BrowserRouter>

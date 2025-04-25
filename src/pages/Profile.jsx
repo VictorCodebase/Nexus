@@ -32,6 +32,11 @@ const Profile = () => {
 
   const handleEdit = (paperId) => {
     const selectedPaper = papers.find((paper) => paper.paper_id === paperId);
+    if (!selectedPaper) {
+      console.error("Paper not found for editing:", paperId);
+      return;
+    }
+    console.log("Selected paper for editing:", selectedPaper); // Debugging log
     setPaperToEdit(selectedPaper); // Set the selected paper to edit
     setIsModalOpen(true); // Open the modal
   };
@@ -62,6 +67,7 @@ const Profile = () => {
       // Call the API to update the paper
       console.log("Updated paper data:", formData);
       // You can call the edit API here and update the state accordingly
+      await fetchUserPapers(user.id); // Refresh the papers after editing
       setIsModalOpen(false); // Close the modal after submission
     } catch (err) {
       console.error("Error updating paper:", err);
