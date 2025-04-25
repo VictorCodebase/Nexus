@@ -29,6 +29,7 @@ const Profile = () => {
       setError("Failed to fetch user papers");
     }
   };
+  console.log("this are the user papers", papers);
 
   const handleEdit = (paperId) => {
     const selectedPaper = papers.find((paper) => paper.paper_id === paperId);
