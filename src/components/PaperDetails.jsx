@@ -1,9 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const PaperDetails = ({ paper, categoryName, publisherName, tagNames }) => {
+const PaperDetails = ({ paper, categoryName, publisherName }) => {
   const navigate = useNavigate();
   const BASE_URL = "http://localhost:5000"; // or your production URL
+
+  console.log("Paper details:", paper);
 
   const gradients = [
     "from-blue-500 to-purple-500",
@@ -15,10 +17,23 @@ const PaperDetails = ({ paper, categoryName, publisherName, tagNames }) => {
 
   const randomGradient = gradients[paper.paper_id % gradients.length];
 
+  // Parse the tags field
+  
+  // try {
+  //   if (Array.isArray(paper.tags)) {
+  //     tagNames = paper.tags; // Use it directly if it's already an array
+  //   } else if (typeof paper.tags === "string" && paper.tags.trim()) {
+  //     tagNames = JSON.parse(paper.tags); // Parse it if it's a valid JSON string
+  //   } else {
+  //     tagNames = []; // Fallback to an empty array if it's null, undefined, or invalid
+  //   }
+  // } catch (error) {
+  //   console.error("Error parsing tags:", error);
+  //   tagNames = [];
+  // }
+
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
-    
-
       {/* Header */}
       <div
         className={`relative bg-gradient-to-r ${randomGradient} text-white p-6 rounded-lg shadow-md`}
@@ -26,9 +41,6 @@ const PaperDetails = ({ paper, categoryName, publisherName, tagNames }) => {
         <h1 className="text-3xl font-bold capitalize">{paper.paper_name}</h1>
         <p className="mt-2 text-lg">
           Category: <span className="font-bold">{categoryName || "Unknown"}</span>
-        </p>
-        <p className="mt-2 text-lg">
-          Publisher: <span className="font-bold">{publisherName || "Unknown"}</span>
         </p>
         <p className="mt-2 text-sm">
           Published on:{" "}
@@ -85,11 +97,11 @@ const PaperDetails = ({ paper, categoryName, publisherName, tagNames }) => {
         )}
 
         {/* Tags */}
-        {tagNames && tagNames.length > 0 ? (
+        {paper.tags && paper.tags.length > 0 ? (
           <section>
             <h2 className="text-xl font-semibold text-gray-800">Tags</h2>
             <div className="mt-2 flex flex-wrap gap-2">
-              {tagNames.map((tag, index) => (
+              {paper.tags.map((tag) => (
                 <span
                   key={index}
                   className="bg-blue-200 text-blue-800 px-3 py-1 rounded-full text-sm font-medium"

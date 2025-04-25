@@ -34,12 +34,26 @@ const EditModal = ({ isOpen, onClose, onSubmit, paperData }) => {
   console.log("this is the categories", categories);
 
   // Pre-fill the form fields with the existing paper data
-  useEffect(() => {
+// Pre-fill the form fields with the existing paper data
+useEffect(() => {
     if (paperData) {
       setTitle(paperData.paper_name || "");
       setDescription(paperData.description || "");
       setCategory(paperData.category_id || ""); // Use category ID for the dropdown
-      setTags(paperData.tags || []);
+  
+      // Ensure tags is always an array
+      try {
+        if (Array.isArray(paperData.tags)) {
+          setTags(paperData.tags); // Use directly if it's already an array
+        } else if (typeof paperData.tags === "string" && paperData.tags.trim()) {
+          setTags(JSON.parse(paperData.tags)); // Parse if it's a JSON string
+        } else {
+          setTags([]); // Fallback to an empty array
+        }
+      } catch (err) {
+        console.error("Error parsing tags:", err);
+        setTags([]); // Fallback to an empty array if parsing fails
+      }
     }
   }, [paperData]);
 

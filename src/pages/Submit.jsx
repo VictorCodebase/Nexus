@@ -41,13 +41,13 @@ const Submit = () => {
     };
     fetchData();
   }, []);
-  console.log(availableTags)
+  
 
-  const handleAddTag = (tag) => {
-    if (tag && !tags.includes(tag)) {
-      setTags([...tags, tag]);
-    }
-  };
+  // const handleAddTag = (tag) => {
+  //   if (tag && !tags.includes(tag)) {
+  //     setTags([...tags, tag]);
+  //   }
+  // };
 
   const handleTagKeyDown = (e) => {
     if (["Enter", ","].includes(e.key)) {
@@ -112,6 +112,7 @@ const Submit = () => {
       );
     }
   };
+  console.log("tags being sent:",tags)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center px-4 py-4">
@@ -226,11 +227,11 @@ const Submit = () => {
               placeholder="Start typing to see suggestions or add custom tags"
               className="mt-1 w-full rounded-lg border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <datalist id="tag-suggestions">
+            {/* <datalist id="tag-suggestions">
               {availableTags.map((tag) => (
                 <option key={tag.tag_id} value={tag.tag_name} />
               ))}
-            </datalist>
+            </datalist> */}
           </div>
 
           <div className="col-span-1">
