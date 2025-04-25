@@ -49,6 +49,7 @@ const SinglePage = () => {
     fetchData();
   }, [id]);
 
+  console.log("this is the paper", paper);
   const handleBack = () => {
     navigate(-1);
   };
