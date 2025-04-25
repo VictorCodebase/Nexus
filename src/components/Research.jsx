@@ -1,21 +1,23 @@
 import { FileText, ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
+import { researchPapers } from "../utils/data";
 
 const ResearchPapers = () => {
   // Sample papers data (Replace with API data)
-  const [papers, setPapers] = useState([])
+
+  const [papers, setPapers] = useState(researchPapers)
 
 
-useEffect(() => {
-	fetch("/api/research_papers")
-		.then((response) => response.json())
-		.then((data) => {
-      setPapers(data)
-		})
-		.catch((error) => {
-			console.error("Error fetching research papers:", error);
-		});
-}, []);
+// useEffect(() => {
+// 	fetch("/api/research_papers")
+// 		.then((response) => response.json())
+// 		.then((data) => {
+//       setPapers(data)
+// 		})
+// 		.catch((error) => {
+// 			console.error("Error fetching research papers:", error);
+// 		});
+// }, []);
 
   return (
     <section className="py-16 px-6 md:px-12 bg-gray-200 text-gray-900">
@@ -27,7 +29,7 @@ useEffect(() => {
       </div>
 
       <div className="mt-8 grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-        {papers.map((paper) => (
+        {papers.slice(0,2).map((paper) => (
           <div key={paper.id} className="bg-white p-6 rounded-lg shadow-md">
             <div className="flex items-center space-x-3">
               <FileText size={24} className="text-blue-600" />
@@ -36,9 +38,10 @@ useEffect(() => {
             <p className="text-gray-500 text-sm mt-1">
               By {paper.author} • {paper.category}
             </p>
-            <p className="mt-3 text-gray-700 text-sm">{paper.abstract}</p>
+            <p className="mt-3 text-gray-700 text-sm">{paper.abstract.length > 100 ? paper.abstract.slice (0,100) + "...": paper.abstract}</p>
+            {/* <p className="mt-3 text-gray-600 text-sm">{paper.introduction}</p> */}
             <a
-              href={`/paper-details/${paper.id}`}
+              href={`/browser/${paper.id}`}
               className="mt-4 inline-flex items-center text-blue-600 font-medium hover:underline"
             >
               Read More <ArrowRight className="ml-1" size={18} />

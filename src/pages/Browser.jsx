@@ -1,27 +1,76 @@
-import React, { useState } from "react";
-import { researchPapers, Categories } from "../utils/data";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import PaperList from "../components/PaperList";
+import { getPapers } from "../services/paperServices";
+import { getCategories } from "../services/categoriesServices";
 
 const Browser = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
+  const [researchPapers, setResearchPapers] = useState([]);
+  const [filteredPapers, setFilteredPapers] = useState([]);
+  const [categories, setCategories] = useState([]);
 
-  const filteredPapers = researchPapers
-    .filter((paper) =>
-      selectedCategory === "All" ? true : paper.category === selectedCategory
-    )
-    .filter((paper) =>
-      paper.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      paper.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      paper.description.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+  // Fetching the papers on mount
+  useEffect(() => {
+    const fetchPapers = async () => {
+      try {
+        const papers = await getPapers();
+        setResearchPapers(papers.data || []); // Default to an empty array if data is undefined
+        setFilteredPapers(papers.data || []); // Default to an empty array if data is undefined
+      } catch (err) {
+        console.error("Error fetching papers:", err);
+      }
+    };
+    fetchPapers();
+  }, []);
+
+  // Fetching the categories on mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const categoriesData = await getCategories();
+        console.log("this are the categories", categoriesData);
+
+        // Add an "All" option at the start
+        setCategories([
+          { category_id: "All", category: "All" }, // Add 'All' category for global filtering
+          ...categoriesData, // Categories from API
+        ]);
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  // Filtering the papers whenever category is selected or search term is inputted
+  useEffect(() => {
+    const filtered = researchPapers
+      .filter((paper) =>
+        selectedCategory === "All" // If 'All' category is selected, show all papers
+          ? true
+          : paper.category_id === selectedCategory // Filter by category_id
+      )
+      .filter(
+        (paper) =>
+          (paper.paper_name?.toLowerCase() || "").includes(
+            searchTerm.toLowerCase()
+          ) ||
+          (paper.description?.toLowerCase() || "").includes(
+            searchTerm.toLowerCase()
+          )
+      );
+    setFilteredPapers(filtered);
+  }, [selectedCategory, searchTerm, researchPapers]);
+
+  console.log("Filtered Papers:", filteredPapers);
 
   return (
     <div className="flex h-screen bg-gray-100 p-4 gap-4">
       {/* Sidebar component */}
       <Sidebar
-        categories={Categories}
+        categories={categories}
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
       />
@@ -38,7 +87,11 @@ const Browser = () => {
         />
 
         {/* Paper List */}
-        <PaperList filteredPapers={filteredPapers} />
+        {filteredPapers.length > 0 ? (
+          <PaperList filteredPapers={filteredPapers} />
+        ) : (
+          <p className="text-center text-gray-500">No papers found.</p>
+        )}
       </main>
     </div>
   );

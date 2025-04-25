@@ -1,26 +1,86 @@
 import React, { useState } from "react";
+import { login, signup } from "../services/authServices";
+import { useNavigate } from "react-router-dom";
 
 const AuthForm = () => {
   const [isSignup, setIsSignup] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [fname, setFname] = useState("");
+  const [lname, setLname] = useState("");
+  const [username, setUsername] = useState("");
+  const [institution, setInstitution] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [welcome, setWelcome] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isSignup && (!firstName || !lastName || !email || !password)) {
-      setError("All fields are required for signup");
-    } else if (!isSignup && (!email || !password)) {
-      setError("Email and password are required for login");
-    } else {
-      setError("");
+    setError("");
+    setLoading(true);
+
+    let response;
+    if (isSignup) {
+      if (
+        !fname ||
+        !lname ||
+        !institution ||
+        !username ||
+        !email ||
+        !password
+      ) {
+        setError("All fields are required for signup");
+        setLoading(false);
+
+        return;
+      }
+
       console.log(
-        isSignup
-          ? `Signup - First Name: ${firstName}, Last Name: ${lastName}, Email: ${email}, Password: ${password}`
-          : `Login - Email: ${email}, Password: ${password}`
+        "form data",
+        fname,
+        lname,
+        institution,
+        username,
+        email,
+        password
       );
+
+      response = await signup(
+        institution,
+        fname,
+        lname,
+        username,
+        email,
+        password
+      );
+    } else {
+      if (!email || !password) {
+        setError("Email and password are required for login");
+        setLoading(false);
+        return;
+      }
+      response = await login(email, password);
+    }
+
+    setLoading(false);
+
+    if (response.error) {
+      setError(response.error);
+    } else {
+      console.log("Success:", response);
+
+      // Store user data in localStorage
+      localStorage.setItem("user", JSON.stringify(response.user));
+      localStorage.setItem("token", response.token); // Ensure token is stored
+
+      // Display Welcome Message
+      setWelcome(`Welcome ${response.user.fname} ${response.user.lname}`);
+
+      // Wait for context update before navigating
+      setTimeout(() => {
+        navigate("/"); // or navigate("/submit");
+      }, 100); // slight delay allows context update
     }
   };
 
@@ -31,37 +91,67 @@ const AuthForm = () => {
           {isSignup ? "Signup" : "Login"}
         </h2>
         {error && <p className="text-red-500 mb-4">{error}</p>}
-        
+
         <form onSubmit={handleSubmit}>
           {isSignup && (
-            <div className="flex flex-row gap-2">
-              <div className="mb-4 w-1/2">
-                <label className="block text-gray-700 mb-2" htmlFor="firstName">
-                  First Name
+            <section>
+              <div className="flex flex-row gap-2">
+                <div className="mb-4 w-1/2">
+                  <label
+                    className="block text-gray-700 mb-2"
+                    htmlFor="firstName"
+                  >
+                    First Name
+                  </label>
+                  <input
+                    type="text"
+                    id="firstName"
+                    className="w-full px-3 py-2 border rounded-md"
+                    value={fname}
+                    onChange={(e) => setFname(e.target.value)}
+                  />
+                </div>
+                <div className="mb-4 w-1/2">
+                  <label
+                    className="block text-gray-700 mb-2"
+                    htmlFor="lastName"
+                  >
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    id="lastName"
+                    className="w-full px-3 py-2 border rounded-md"
+                    value={lname}
+                    onChange={(e) => setLname(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="mb-4">
+                <label htmlFor="username" className="text-gray-700">
+                  User name
                 </label>
                 <input
                   type="text"
-                  id="firstName"
+                  id="username"
                   className="w-full px-3 py-2 border rounded-md"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  required={isSignup}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                 />
               </div>
-              <div className="mb-4 w-1/2">
-                <label className="block text-gray-700 mb-2" htmlFor="lastName">
-                  Last Name
+              <div className="mb-4">
+                <label htmlFor="institution" className="text-gray-700">
+                  Institution
                 </label>
                 <input
                   type="text"
-                  id="lastName"
+                  id="institution"
                   className="w-full px-3 py-2 border rounded-md"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  required={isSignup}
+                  value={institution}
+                  onChange={(e) => setInstitution(e.target.value)}
                 />
               </div>
-            </div>
+            </section>
           )}
 
           <div className="mb-4">
@@ -74,7 +164,6 @@ const AuthForm = () => {
               className="w-full px-3 py-2 border rounded-md"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
             />
           </div>
 
@@ -88,15 +177,15 @@ const AuthForm = () => {
               className="w-full px-3 py-2 border rounded-md"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
             />
           </div>
 
           <button
             type="submit"
             className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
+            disabled={loading}
           >
-            {isSignup ? "Signup" : "Login"}
+            {loading ? "Processing..." : isSignup ? "Signup" : "Login"}
           </button>
         </form>
 
@@ -110,6 +199,13 @@ const AuthForm = () => {
           </button>
         </p>
       </div>
+
+      {/* Welcome Popup */}
+      {welcome && (
+        <div className="fixed top-5 right-5 bg-green-500 text-white p-4 rounded-md shadow-lg transition-opacity duration-500">
+          {welcome}
+        </div>
+      )}
     </div>
   );
 };

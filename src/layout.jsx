@@ -8,8 +8,8 @@ const Layout = () => {
       
       <Navbar />
 
-      <div className="flex-1 flex justify-center  py-4">
-        <div className="w-full max-w-6xl px-4  ">
+      <div className="flex-1 flex justify-center  ">
+        <div className="w-full max-w-8xl phx-4  ">
           <Outlet />
         </div>
       </div>
