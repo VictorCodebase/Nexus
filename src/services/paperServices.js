@@ -50,7 +50,7 @@ export const uploadPapers = async(formData, token) => {
 
 export const getPapersByUser = async(id) => {
     try{
-        const response = await axios.get(`${API_URL}/papers?publisher_id = ${id}`)
+        const response = await axios.get(`${API_URL}/papers?publisher_id=${id}`)
         return response.data
     }catch(err){
         console.error("Error fetching papers by user:", err);
